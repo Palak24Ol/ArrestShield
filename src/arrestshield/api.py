@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from .asr import WhisperASR
 from .inference import DetectorEngine, InferencePolicy
+from .transformer_inference import MultiTaskPredictor
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -47,10 +48,21 @@ def load_service_components(
         maximum_characters=int(policy_config["maximum_characters"]),
     )
     fusion_path = PROJECT_ROOT / config["models"]["risk_fusion_path"]
+    auxiliary_predictor = None
+    transformer_path = PROJECT_ROOT / config["models"]["multitask_transformer_path"]
+    if (
+        bool(config["models"].get("use_multitask_auxiliary_if_available", True))
+        and (transformer_path / "manifest.json").exists()
+    ):
+        auxiliary_predictor = MultiTaskPredictor(
+            transformer_path,
+            torch_threads=int(config["models"].get("multitask_torch_threads", 4)),
+        ).predict
     engine = DetectorEngine.from_paths(
         PROJECT_ROOT / config["models"]["base_detector_path"],
         policy,
         fusion_path=fusion_path,
+        auxiliary_predictor=auxiliary_predictor,
     )
     transcriber = None
     if config["asr"]["enabled"]:
@@ -100,7 +112,9 @@ def create_app(
 
     @app.get("/v1/model")
     def model_info() -> dict[str, Any]:
-        return app.state.engine.model_info()
+        result = app.state.engine.model_info()
+        result["multitask_auxiliary_loaded"] = app.state.engine.auxiliary_predictor is not None
+        return result
 
     @app.post("/v1/detect/text")
     def detect_text(request: DetectTextRequest) -> dict[str, Any]:

@@ -8,7 +8,10 @@
   },
   "models": {
     "base_detector_path": "artifacts/models/model_ladder_v1/selected_detector.joblib",
-    "risk_fusion_path": "artifacts/models/risk_fusion_v1/risk_fusion.joblib"
+    "risk_fusion_path": "artifacts/models/risk_fusion_v1/risk_fusion.joblib",
+    "multitask_transformer_path": "artifacts/models/multitask_transformer_v1",
+    "use_multitask_auxiliary_if_available": true,
+    "multitask_torch_threads": 4
   },
   "policy": {
     "detector_status": "research_only_not_promoted",
@@ -31,6 +34,7 @@
   "boundaries": {
     "llm_used_for_detection": false,
     "api_invokes_honeypot": false,
-    "honeypot_is_separate_downstream_service": true
+    "honeypot_is_separate_downstream_service": true,
+    "multitask_outputs_are_auxiliary_until_promoted": true
   }
 }
