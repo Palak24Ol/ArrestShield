@@ -111,9 +111,38 @@ class TrainingFoundationTests(unittest.TestCase):
             return np.asarray([0.9 if "scam" in value else 0.1 for value in values])
 
         result = early_detection_metrics([example], score, threshold=0.5, fractions=[0.5, 1.0])
-        self.assertEqual(result["detection_rate_by_available_conversation"]["at_50_percent"], 0.0)
-        self.assertEqual(result["detection_rate_by_available_conversation"]["at_100_percent"], 1.0)
+        self.assertEqual(
+            result["cumulative_detection_rate_by_conversation_fraction"]["at_50_percent"], 0.0
+        )
+        self.assertEqual(
+            result["cumulative_detection_rate_by_conversation_fraction"]["at_100_percent"], 1.0
+        )
         self.assertEqual(result["median_fraction_to_first_detection"], 1.0)
+
+    def test_early_detection_cumulative_rate_latches(self) -> None:
+        from arrestshield.data import ConversationExample
+
+        example = ConversationExample(
+            conversation_id="early-positive",
+            text="trigger\nneutral",
+            label=1,
+            scam_type="digital_arrest",
+            split="test",
+            source="fixture",
+            languages=("hinglish",),
+            provenance="source_silver",
+            turn_texts=("trigger", "neutral"),
+        )
+
+        def score(values: list[str]) -> np.ndarray:
+            return np.asarray([0.9 if value == "trigger" else 0.1 for value in values])
+
+        result = early_detection_metrics([example], score, threshold=0.5, fractions=[0.5, 1.0])
+        cumulative = result["cumulative_detection_rate_by_conversation_fraction"]
+        point = result["active_at_exact_conversation_fraction"]
+        self.assertEqual(cumulative["at_50_percent"], 1.0)
+        self.assertEqual(cumulative["at_100_percent"], 1.0)
+        self.assertEqual(point["at_100_percent"], 0.0)
 
 
 if __name__ == "__main__":

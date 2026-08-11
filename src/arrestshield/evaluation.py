@@ -170,14 +170,21 @@ def early_detection_metrics(
         if score >= threshold and example_index not in first_detection:
             first_detection[example_index] = (prefix_size, total_turns)
 
-    rates: dict[str, float] = {}
+    cumulative_rates: dict[str, float] = {}
+    point_rates: dict[str, float] = {}
     for fraction in fractions:
-        detected = 0
+        cumulatively_detected = 0
+        active_at_point = 0
         for example_index, example in enumerate(positives):
             prefix_size = min(len(example.turn_texts), max(1, ceil(len(example.turn_texts) * fraction)))
+            first = first_detection.get(example_index)
+            if first is not None and first[0] <= prefix_size:
+                cumulatively_detected += 1
             if score_lookup[(example_index, prefix_size)] >= threshold:
-                detected += 1
-        rates[f"at_{int(round(fraction * 100))}_percent"] = detected / len(positives)
+                active_at_point += 1
+        key = f"at_{int(round(fraction * 100))}_percent"
+        cumulative_rates[key] = cumulatively_detected / len(positives)
+        point_rates[key] = active_at_point / len(positives)
 
     detection_fractions = [turn / total for turn, total in first_detection.values()]
     return {
@@ -188,5 +195,6 @@ def early_detection_metrics(
         "median_fraction_to_first_detection": (
             float(median(detection_fractions)) if detection_fractions else None
         ),
-        "detection_rate_by_available_conversation": rates,
+        "cumulative_detection_rate_by_conversation_fraction": cumulative_rates,
+        "active_at_exact_conversation_fraction": point_rates,
     }
