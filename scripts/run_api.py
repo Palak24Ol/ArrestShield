@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -22,8 +23,8 @@ def main() -> int:
     service = config["service"]
     uvicorn.run(
         create_default_app(),
-        host=str(service["host"]),
-        port=int(service["port"]),
+        host=os.environ.get("ARRESTSHIELD_HOST", str(service["host"])),
+        port=int(os.environ.get("ARRESTSHIELD_PORT", service["port"])),
         log_level="info",
     )
     return 0
