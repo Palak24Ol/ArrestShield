@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0.0",
+  "model_id": "arrestshield-tfidf-sgd-v1",
+  "random_seed": 42,
+  "data": {
+    "allowed_label_provenance": [
+      "source_gold",
+      "source_silver"
+    ],
+    "provenance_weights": {
+      "source_gold": 1.0,
+      "source_silver": 0.75,
+      "weak_rule": 0.35,
+      "unlabeled": 0.0
+    }
+  },
+  "features": {
+    "word_ngram_range": [
+      1,
+      2
+    ],
+    "word_min_df": 2,
+    "word_max_features": 100000,
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "char_min_df": 2,
+    "char_max_features": 100000,
+    "max_df": 0.995,
+    "sublinear_tf": true
+  },
+  "classifier": {
+    "loss": "log_loss",
+    "penalty": "elasticnet",
+    "alpha": 1e-05,
+    "l1_ratio": 0.05,
+    "max_iter": 1500,
+    "tolerance": 0.0001,
+    "class_weight": "balanced",
+    "average": true
+  },
+  "threshold_selection": {
+    "metric": "fbeta",
+    "beta": 2.0,
+    "min_precision": 0.25,
+    "grid_size": 197
+  },
+  "evaluation": {
+    "early_detection_fractions": [
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ]
+  }
+}
