@@ -392,8 +392,6 @@ def head_tail_token_ids(
     head_ratio: float,
 ) -> tuple[list[int], list[int]]:
     """Encode long text as head + boundary + tail instead of right truncation."""
-    if not 0.0 < head_ratio < 1.0:
-        raise ValueError("head_ratio must be between zero and one")
     ids = list(
         tokenizer(
             text,
@@ -402,6 +400,19 @@ def head_tail_token_ids(
             verbose=False,
         )["input_ids"]
     )
+    return head_tail_from_ids(tokenizer, ids, max_length, head_ratio)
+
+
+def head_tail_from_ids(
+    tokenizer: Any,
+    token_ids: Sequence[int],
+    max_length: int,
+    head_ratio: float,
+) -> tuple[list[int], list[int]]:
+    """Apply deterministic head-tail selection to already-tokenized IDs."""
+    if not 0.0 < head_ratio < 1.0:
+        raise ValueError("head_ratio must be between zero and one")
+    ids = list(token_ids)
     budget = max(1, int(max_length) - tokenizer.num_special_tokens_to_add(pair=False))
     if len(ids) > budget:
         marker = getattr(tokenizer, "sep_token_id", None)
@@ -487,10 +498,20 @@ def build_torch_components() -> tuple[type[Any], type[Any]]:
             head_ratio: float = 0.5,
         ):
             self.examples = list(examples)
-            encoded_rows = [
-                head_tail_token_ids(tokenizer, item.text, max_length, head_ratio)
-                for item in self.examples
-            ]
+            encoded_rows: list[tuple[list[int], list[int]]] = []
+            batch_size = 512
+            for start in range(0, len(self.examples), batch_size):
+                batch = self.examples[start : start + batch_size]
+                tokenized = tokenizer(
+                    [item.text for item in batch],
+                    add_special_tokens=False,
+                    truncation=False,
+                    verbose=False,
+                )["input_ids"]
+                encoded_rows.extend(
+                    head_tail_from_ids(tokenizer, ids, max_length, head_ratio)
+                    for ids in tokenized
+                )
             self.encodings = {
                 "input_ids": torch.tensor([row[0] for row in encoded_rows], dtype=torch.long),
                 "attention_mask": torch.tensor([row[1] for row in encoded_rows], dtype=torch.long),
