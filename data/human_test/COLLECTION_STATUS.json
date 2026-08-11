@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_id": "project_authored_arrestshield_frozen_test_v1",
+  "status": "not_collected",
+  "accepted_conversations": 0,
+  "required_conversations": 150,
+  "human_gold_available": false,
+  "training_use_allowed": false,
+  "threshold_tuning_use_allowed": false,
+  "note": "No records are fabricated. Run the collection, independent annotation, adjudication, and freeze workflow before final claims."
+}

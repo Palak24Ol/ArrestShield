@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arrestshield.local/schemas/human-test-record-v1.json",
+  "title": "ArrestShield human frozen-test collection records",
+  "$defs": {
+    "intake": {
+      "type": "object",
+      "required": [
+        "conversation_id",
+        "collection_channel",
+        "language_profile",
+        "turns",
+        "consent_confirmed",
+        "pii_redacted",
+        "llm_generated"
+      ],
+      "properties": {
+        "conversation_id": {"type": "string", "pattern": "^AHFT-[0-9]{4}$"},
+        "collection_channel": {
+          "enum": [
+            "volunteer_roleplay",
+            "consented_deidentified_recollection",
+            "consented_deidentified_call_transcript"
+          ]
+        },
+        "language_profile": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["english", "hindi", "hinglish"]}
+        },
+        "turns": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["speaker_role", "text"],
+            "properties": {
+              "speaker_role": {"type": "string"},
+              "text": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "consent_confirmed": {"const": true},
+        "pii_redacted": {"const": true},
+        "llm_generated": {"const": false}
+      },
+      "additionalProperties": true
+    },
+    "annotation": {
+      "type": "object",
+      "required": [
+        "conversation_id",
+        "annotator_id",
+        "is_scam",
+        "scam_type",
+        "tactics",
+        "stage",
+        "evidence_spans",
+        "llm_used"
+      ],
+      "properties": {
+        "conversation_id": {"type": "string"},
+        "annotator_id": {"type": "string", "minLength": 1},
+        "is_scam": {"enum": [0, 1]},
+        "scam_type": {"type": "string"},
+        "tactics": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "stage": {"type": "string"},
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["tactic", "turn_id", "text"],
+            "properties": {
+              "tactic": {"type": "string"},
+              "turn_id": {"type": "integer", "minimum": 0},
+              "text": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "llm_used": {"const": false}
+      },
+      "additionalProperties": true
+    },
+    "adjudication": {
+      "allOf": [
+        {"$ref": "#/$defs/annotation"},
+        {
+          "type": "object",
+          "required": ["adjudicator_id", "reason"],
+          "properties": {
+            "adjudicator_id": {"type": "string", "minLength": 1},
+            "reason": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    }
+  }
+}

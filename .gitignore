@@ -23,3 +23,9 @@ artifacts/models/**
 artifacts/pretrained/**
 !artifacts/pretrained/.gitkeep
 reports/tmp/
+data/human_test/raw/**
+data/human_test/annotations/**
+data/human_test/frozen/**
+!data/human_test/raw/.gitkeep
+!data/human_test/annotations/.gitkeep
+!data/human_test/frozen/.gitkeep

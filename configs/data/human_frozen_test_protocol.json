@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_id": "project_authored_arrestshield_frozen_test_v1",
+  "status": "collection_required",
+  "purpose": "Source-controlled final evaluation only; never training, threshold tuning, or prompt development.",
+  "minimum_conversations": 150,
+  "minimum_class_counts": {
+    "scam": 60,
+    "non_scam": 60
+  },
+  "minimum_language_counts": {
+    "english": 35,
+    "hindi": 35,
+    "hinglish": 35
+  },
+  "minimum_positive_scam_type_counts": {
+    "digital_arrest": 20,
+    "fake_kyc_bank": 8,
+    "courier_customs": 8,
+    "otp_account_takeover": 8,
+    "impersonation_other": 8
+  },
+  "annotation": {
+    "minimum_independent_annotators": 2,
+    "require_third_party_adjudication_on_any_disagreement": true,
+    "evidence_span_required_for_positive_tactic": true,
+    "llm_annotation_allowed": false
+  },
+  "collection": {
+    "allowed_channels": [
+      "volunteer_roleplay",
+      "consented_deidentified_recollection",
+      "consented_deidentified_call_transcript"
+    ],
+    "require_both_classes_per_channel": true,
+    "require_consent": true,
+    "require_pii_redaction": true,
+    "llm_generated_dialogue_allowed": false,
+    "minimum_turns": 2
+  },
+  "leakage": {
+    "reject_canonical_conversation_id_match": true,
+    "reject_normalized_transcript_hash_match": true,
+    "reject_duplicate_frozen_transcript": true
+  },
+  "freeze": {
+    "write_once": true,
+    "include_sha256_manifest": true,
+    "label_provenance": "human_gold",
+    "random_seed": 20260812
+  }
+}
