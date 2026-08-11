@@ -36,6 +36,12 @@ See `docs/models/BASELINE_TRAINING.md` for the protocol, artifact layout, and
 limitations. Fine-grained scam type, manipulation tactic, and scam stage heads
 will be trained only after enough human-reviewed labels are available.
 
+The pre-registered comparison rule is documented in
+`docs/MODEL_SELECTION_PROTOCOL.md`: maximize recall at a hard-negative false-
+positive rate no greater than 5%, report three-seed mean and standard deviation,
+and use stable scammer turns-to-detection as the first tiebreaker. The hybrid
+PsyScam/digital-arrest label definitions are in `docs/ANNOTATION_CODEBOOK.md`.
+
 ## Important boundary
 
 The detector will be trained and evaluated from versioned ML datasets. An LLM

@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "protocol_id": "arrestshield-source-aware-v1",
+  "seeds": [17, 42, 93],
+  "primary_selection": {
+    "constraint": "hard_negative_false_positive_rate",
+    "maximum": 0.05,
+    "objective": "scam_recall",
+    "aggregation": "mean_across_seeds",
+    "threshold_source": "validation_only"
+  },
+  "tie_rule": {
+    "statistical_band": "within_one_pooled_standard_deviation",
+    "ordered_tiebreakers": [
+      "median_stable_scammer_turns_to_detection",
+      "macro_f1",
+      "mixed_script_coverage",
+      "smaller_model_artifact"
+    ]
+  },
+  "hysteresis": {
+    "entry_threshold": "selected_at_validation_fpr_constraint",
+    "exit_threshold_ratio": 0.8,
+    "stable_detection_definition": "first_scammer_turn_at_or_above_entry_after_which_all_remaining_scores_stay_at_or_above_exit"
+  },
+  "evaluation_views": [
+    "conversation_group_test",
+    "mixed_source_test",
+    "hard_negative_test",
+    "leave_one_mixed_source_out"
+  ],
+  "required_metrics": [
+    "recall_at_fixed_fpr",
+    "precision",
+    "macro_f1",
+    "pr_auc",
+    "false_positive_rate",
+    "median_stable_scammer_turns_to_detection",
+    "undetected_rate",
+    "mean_and_standard_deviation_across_seeds"
+  ],
+  "forbidden_selection_practices": [
+    "selecting_on_test_metrics",
+    "changing_primary_metric_after_results",
+    "row_random_splits",
+    "mixing_near_duplicate_groups_across_splits",
+    "claiming_significance_from_single_seed_results"
+  ]
+}

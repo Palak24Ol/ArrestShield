@@ -1,0 +1,47 @@
+{
+  "schema_version": "2.0.0",
+  "taxonomy_id": "arrestshield-psyscam-operational-v1",
+  "research_psychological_techniques": {
+    "authority_impersonation": "Uses claimed authority, office, institution, title, or identity to gain compliance.",
+    "phantom_riches": "Promises an exaggerated, guaranteed, unexpected, or implausibly easy reward.",
+    "fear_intimidation": "Threatens loss, punishment, arrest, account blocking, harm, or other serious consequences.",
+    "liking": "Builds compliance through friendliness, similarity, compliments, sympathy, or rapport.",
+    "urgency_scarcity": "Creates time pressure or claims an opportunity, deadline, or resource is limited.",
+    "pretext_trust": "Constructs a plausible cover story or uses personal/contextual details to manufacture trust.",
+    "reciprocity": "Provides or promises a favor, benefit, or help that creates pressure to reciprocate.",
+    "consistency_commitment": "Uses a prior action or small commitment to pressure a larger consistent action.",
+    "social_proof": "Uses claimed behavior, approval, or success of other people to normalize compliance."
+  },
+  "digital_arrest_operational_signals": {
+    "accusation": "Claims that the target, identity, account, SIM, parcel, or relative is linked to a crime.",
+    "secrecy_instruction": "Directs the target not to tell family, bank staff, police, or other people.",
+    "isolation_instruction": "Attempts to move or keep the target alone or continuously connected to the scammer.",
+    "surveillance_control": "Demands screen sharing, video monitoring, continuous call presence, or environmental control.",
+    "financial_demand": "Requests or directs a transfer, deposit, payment, cash withdrawal, or asset movement.",
+    "credential_request": "Requests an OTP, PIN, password, CVV, login code, recovery code, or equivalent secret."
+  },
+  "legacy_mapping": {
+    "fear_threat": "fear_intimidation",
+    "urgency": "urgency_scarcity",
+    "secrecy": "secrecy_instruction",
+    "isolation": "isolation_instruction",
+    "credential_otp_request": "credential_request"
+  },
+  "annotation_policy": {
+    "unit": "speaker_turn_with_conversation_context",
+    "multi_label": true,
+    "evidence_span_required_for_positive": true,
+    "unknown_is_not_negative": true,
+    "minimum_annotators": 2,
+    "disagreement_resolution": "third_annotator_adjudication",
+    "gold_requires_human_verification": true,
+    "llm_suggestions_may_not_become_gold_without_human_verification": true
+  },
+  "references": [
+    {
+      "name": "PsyScam",
+      "url": "https://aclanthology.org/2025.findings-emnlp.675/",
+      "scope": "nine research psychological-technique labels"
+    }
+  ]
+}
