@@ -1,0 +1,108 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "arrestshield-multilingual-distilbert-multitask-v1",
+  "backbone": {
+    "model_id": "distilbert-base-multilingual-cased",
+    "model_revision": "main",
+    "trust_remote_code": false,
+    "local_pretrained_path": "artifacts/pretrained/distilbert-base-multilingual-cased",
+    "selection_role": "feasibility_only",
+    "conclusion_policy": "This run validates the multi-task pipeline only. It is not evidence against or in favor of the registered GPU comparison candidates.",
+    "preferred_cpu_candidate_blocked": {
+      "model_id": "ai4bharat/indic-bert",
+      "reason": "Hugging Face files require user gate acceptance and the publisher's public archive currently returns a disabled-billing error. No gate bypass is used."
+    },
+    "gpu_comparison_candidates": [
+      "ai4bharat/indic-bert",
+      "l3cube-pune/hing-roberta-mixed",
+      "google/muril-base-cased",
+      "FacebookAI/xlm-roberta-base"
+    ]
+  },
+  "labels": {
+    "scam_types": [
+      "non_scam",
+      "digital_arrest",
+      "fake_kyc_bank",
+      "courier_customs",
+      "otp_account_takeover",
+      "impersonation_other",
+      "tech_support",
+      "loan_job",
+      "other_scam"
+    ],
+    "tactics": [
+      "authority_impersonation",
+      "phantom_riches",
+      "fear_intimidation",
+      "liking",
+      "urgency_scarcity",
+      "pretext_trust",
+      "reciprocity",
+      "consistency_commitment",
+      "social_proof",
+      "accusation",
+      "secrecy_instruction",
+      "isolation_instruction",
+      "surveillance_control",
+      "financial_demand",
+      "credential_request"
+    ],
+    "stages": [
+      "none_unknown",
+      "contact",
+      "authority_claim",
+      "accusation",
+      "threat",
+      "isolation_control",
+      "payment_extraction"
+    ]
+  },
+  "data": {
+    "allowed_label_provenance": ["source_gold", "source_silver"],
+    "provenance_weights": {
+      "source_gold": 1.0,
+      "source_silver": 0.75
+    },
+    "maximum_negative_to_positive_ratio": 2.5,
+    "mixed_source_negative_ratio": 1.0,
+    "positive_prefix_fractions": [0.25, 0.5, 1.0],
+    "negative_prefix_fractions": [0.5, 1.0],
+    "maximum_windows_per_conversation": 3,
+    "unknown_tactic_policy": "downweighted_negative_when_annotated",
+    "unknown_tactic_negative_weight": 0.25,
+    "source_balanced_sampling": true
+  },
+  "model": {
+    "max_length": 256,
+    "context_encoding": "head_tail",
+    "head_tail_ratio": 0.5,
+    "dropout": 0.2,
+    "loss_weights": {
+      "binary": 1.0,
+      "scam_type": 0.4,
+      "tactics": 0.3,
+      "stage": 0.2
+    }
+  },
+  "training": {
+    "seeds": [17, 42, 93],
+    "deployment_seed": 42,
+    "epochs": 3,
+    "batch_size": 16,
+    "evaluation_batch_size": 32,
+    "gradient_accumulation_steps": 2,
+    "backbone_learning_rate": 0.00002,
+    "head_learning_rate": 0.0005,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "gradient_clip_norm": 1.0,
+    "early_stopping_patience": 1,
+    "num_workers": 0,
+    "torch_threads": 4,
+    "freeze_embeddings": true,
+    "train_last_n_backbone_layers": 1,
+    "deterministic_algorithms": true
+  },
+  "protocol_path": "configs/evaluation/model_selection_protocol.json"
+}

@@ -20,4 +20,6 @@ __pycache__/
 htmlcov/
 artifacts/models/**
 !artifacts/models/.gitkeep
+artifacts/pretrained/**
+!artifacts/pretrained/.gitkeep
 reports/tmp/
