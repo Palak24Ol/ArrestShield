@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "status": "not_collected",
+  "records": 0,
+  "selection_only": true,
+  "used_as_final_test": false,
+  "metrics_available": false,
+  "reason": "No consented or appropriately licensed, manually transcribed Hindi/Hinglish scam and hard-negative audio corpus has been collected yet. ASR backend selection is blocked until both labels and all required languages/sources are represented."
+}

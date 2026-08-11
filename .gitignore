@@ -29,3 +29,7 @@ data/human_test/frozen/**
 !data/human_test/raw/.gitkeep
 !data/human_test/annotations/.gitkeep
 !data/human_test/frozen/.gitkeep
+data/audio_validation/raw/**
+data/audio_validation/manifest.jsonl
+!data/audio_validation/raw/.gitkeep
+reports/asr_validation_v1/transcripts.jsonl

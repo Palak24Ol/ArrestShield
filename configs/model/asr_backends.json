@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "selection_split": "audio_validation_only",
+  "test_used_for_backend_selection": false,
+  "primary_selection": {
+    "constraint": "downstream_false_positive_rate",
+    "maximum": 0.05,
+    "maximize": "downstream_recall",
+    "tie_breakers": ["downstream_macro_f1", "median_runtime_seconds", "wer"]
+  },
+  "audio": {
+    "allowed_extensions": [".wav", ".flac", ".mp3", ".m4a", ".ogg"],
+    "maximum_file_bytes": 52428800,
+    "maximum_duration_seconds": 180.0,
+    "target_sample_rate": 16000,
+    "chunk_length_seconds": 30.0,
+    "batch_size": 1
+  },
+  "backends": {
+    "whisper_tiny_multilingual": {
+      "enabled": true,
+      "selection_role": "cpu_feasibility_and_fallback",
+      "model_id": "openai/whisper-tiny",
+      "local_pretrained_path": "artifacts/pretrained/whisper-tiny",
+      "model_revision": "main",
+      "license": "Apache-2.0",
+      "languages": ["en", "hi"],
+      "task": "transcribe"
+    },
+    "indicwhisper_hindi": {
+      "enabled": false,
+      "selection_role": "registered_gpu_candidate",
+      "model_id": "ai4bharat-vistaar-indicwhisper-hindi",
+      "local_pretrained_path": "artifacts/pretrained/indicwhisper-hindi",
+      "source_url": "https://indicwhisper.objectstore.e2enetworks.net/hindi_models.zip",
+      "license": "MIT",
+      "languages": ["hi"],
+      "task": "transcribe",
+      "disabled_reason": "The official Vistaar Hindi checkpoint is a Whisper-medium derivative and is not installed on this CPU-only 16 GB laptop. Integration remains executable when a compatible local checkpoint is supplied."
+    }
+  },
+  "reporting": {
+    "metrics": [
+      "word_error_rate",
+      "character_error_rate",
+      "downstream_recall",
+      "downstream_false_positive_rate",
+      "downstream_macro_f1",
+      "score_delta_from_reference_transcript",
+      "runtime_seconds"
+    ],
+    "forbid_wer_only_selection": true,
+    "llm_used_for_transcription": false,
+    "llm_used_for_detection": false
+  }
+}

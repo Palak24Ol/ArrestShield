@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arrestshield.local/schemas/audio-validation-record-v1.json",
+  "title": "ArrestShield audio validation record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_id",
+    "conversation_id",
+    "audio_path",
+    "reference_text",
+    "label",
+    "language",
+    "source_group",
+    "rights_basis",
+    "pii_redacted",
+    "split"
+  ],
+  "properties": {
+    "record_id": {"type": "string", "minLength": 1},
+    "conversation_id": {"type": "string", "minLength": 1},
+    "audio_path": {"type": "string", "minLength": 1},
+    "reference_text": {"type": "string", "minLength": 1},
+    "label": {"type": "integer", "enum": [0, 1]},
+    "language": {"type": "string", "enum": ["en", "hi", "hinglish"]},
+    "source_group": {"type": "string", "minLength": 1},
+    "rights_basis": {"type": "string", "minLength": 1},
+    "pii_redacted": {"const": true},
+    "split": {"const": "audio_validation"}
+  }
+}
