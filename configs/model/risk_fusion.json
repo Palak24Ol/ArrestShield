@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "risk_fusion_v1",
+  "protocol_path": "configs/evaluation/model_selection_protocol.json",
+  "base_detector_path": "artifacts/models/model_ladder_v1/selected_detector.joblib",
+  "data": {
+    "allowed_label_provenance": ["source_gold", "source_silver"],
+    "provenance_weights": {"source_gold": 1.0, "source_silver": 0.5},
+    "oof_folds": 5,
+    "oof_seed": 42
+  },
+  "seeds": [17, 42, 93],
+  "deployment_seed": 42,
+  "xgboost": {
+    "n_estimators": 400,
+    "learning_rate": 0.03,
+    "max_depth": 3,
+    "min_child_weight": 5.0,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "reg_alpha": 0.1,
+    "reg_lambda": 2.0,
+    "early_stopping_rounds": 30,
+    "tree_method": "hist",
+    "n_jobs": 2,
+    "maximum_scale_pos_weight": 10.0
+  },
+  "promotion": {
+    "requires_validation_fpr_at_most": 0.05,
+    "requires_recall_not_below_base": true,
+    "requires_frozen_human_gold_test": true,
+    "current_status": "research_only_not_promoted"
+  },
+  "decision_boundary": {
+    "trained_ml_only": true,
+    "llm_used_for_detection": false,
+    "honeypot_llm_is_downstream_only": true
+  }
+}
