@@ -8,7 +8,8 @@ model after seeing whichever metric makes it look best.
 Select one decision threshold per seed using validation data only. The threshold
 must keep the false-positive rate at or below 5% on the hard-negative validation
 set. Among eligible thresholds, maximize scam recall. Compare models using mean
-test recall at that fixed operating rule across seeds `17`, `42`, and `93`.
+validation recall at that fixed operating rule across seeds `17`, `42`, and
+`93`. Evaluate the untouched test views only after selecting the model family.
 
 If two models' mean recall differs by no more than one pooled standard deviation,
 treat them as statistically tied. Resolve a tie using, in order:

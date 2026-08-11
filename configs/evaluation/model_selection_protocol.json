@@ -7,7 +7,9 @@
     "maximum": 0.05,
     "objective": "scam_recall",
     "aggregation": "mean_across_seeds",
-    "threshold_source": "validation_only"
+    "threshold_source": "validation_only",
+    "model_selection_split": "validation",
+    "final_test_policy": "evaluate_once_after_model_family_selection"
   },
   "tie_rule": {
     "statistical_band": "within_one_pooled_standard_deviation",

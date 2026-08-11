@@ -160,6 +160,41 @@
       "files": []
     },
     {
+      "id": "psyscam_d2",
+      "source": "github",
+      "repository": "KiteFlyKid/PsyScam",
+      "revision": "unpinned_until_acquisition",
+      "license": "UNSPECIFIED",
+      "status": "blocked_license_use_taxonomy_only",
+      "role": ["psychological_technique_taxonomy", "english", "scammer_message_subset", "research_reference"],
+      "limitations": ["The public repository contains only the D2 sample subset; the complete dataset is request-only.", "The repository does not provide explicit dataset licensing terms.", "Victim narratives and English scam reports are not interchangeable with live Hinglish scammer speech.", "Use the published taxonomy and codebook mapping; do not train on D2 until permission is verified."],
+      "files": []
+    },
+    {
+      "id": "teleantifraud_28k",
+      "source": "huggingface_and_github",
+      "repository": "JimmyMa99/TeleAntiFraud",
+      "revision": "2026_04_sanitized_release",
+      "license": "VERIFY_DATASET_CARD",
+      "status": "blocked_language_license_and_storage_review",
+      "role": ["audio_text_methodology", "fraud_detection", "fraud_type", "scenario_classification", "asr_structure_reference"],
+      "size_samples": 28511,
+      "limitations": ["Chinese-language corpus; it cannot directly validate Hindi or Hinglish detection.", "Contains privacy-preserved TTS, semantic enhancement, and multi-agent synthetic samples.", "Verify dataset-card license and archive sizes before acquisition.", "Use its three-task structure as methodology, not as the primary ArrestShield test set."],
+      "files": []
+    },
+    {
+      "id": "aslc_448",
+      "source": "mendeley_data",
+      "repository": "doi:10.17632/p384bgyzz3.2",
+      "revision": "version_2_2026_04_13",
+      "license": "CC-BY-4.0",
+      "status": "methodology_reference_not_training_language",
+      "role": ["call_corpus_methodology", "risk_signal_schema", "audio_text", "scam_legitimate"],
+      "size_samples": 448,
+      "limitations": ["Arabic and synthetic; not a Hindi/Hinglish training or headline evaluation source.", "Useful as a precedent for project-authored call annotation and structured risk signals."],
+      "files": []
+    },
+    {
       "id": "project_authored_arrestshield_corpus",
       "source": "local_collection",
       "repository": "C:/ArrestShield/data/external/project_authored_arrestshield_corpus",

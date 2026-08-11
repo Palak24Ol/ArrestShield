@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "arrestshield-model-ladder-v1",
+  "seeds": [17, 42, 93],
+  "deployment_seed": 42,
+  "features": {
+    "word_ngram_range": [1, 2],
+    "word_min_df": 2,
+    "word_max_features": 80000,
+    "char_ngram_range": [3, 5],
+    "char_min_df": 2,
+    "char_max_features": 80000,
+    "max_df": 0.995,
+    "sublinear_tf": true
+  },
+  "svd": {
+    "components": 128,
+    "iterations": 5,
+    "random_seed": 42
+  },
+  "sgd": {
+    "loss": "log_loss",
+    "penalty": "elasticnet",
+    "alpha": 0.00001,
+    "l1_ratio": 0.05,
+    "max_iter": 1500,
+    "tolerance": 0.0001,
+    "class_weight": "balanced",
+    "average": true
+  },
+  "xgboost": {
+    "n_estimators": 500,
+    "learning_rate": 0.05,
+    "max_depth": 5,
+    "min_child_weight": 3.0,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "reg_alpha": 0.05,
+    "reg_lambda": 2.0,
+    "early_stopping_rounds": 40,
+    "tree_method": "hist",
+    "n_jobs": 4
+  },
+  "data": {
+    "allowed_label_provenance": ["source_gold", "source_silver"],
+    "provenance_weights": {
+      "source_gold": 1.0,
+      "source_silver": 0.75
+    }
+  },
+  "protocol_path": "configs/evaluation/model_selection_protocol.json"
+}

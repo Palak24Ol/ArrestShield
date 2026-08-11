@@ -84,6 +84,7 @@ def binary_metrics(
         "specificity": float(specificity),
         "false_positive_rate": float(fpr),
         "f1": float(f1_score(y_true, y_pred, zero_division=0)),
+        "macro_f1": float(f1_score(y_true, y_pred, average="macro", zero_division=0)),
         "f2": float(fbeta_score(y_true, y_pred, beta=2.0, zero_division=0)),
         "matthews_correlation": (
             float(matthews_corrcoef(y_true, y_pred)) if has_both_classes else None
