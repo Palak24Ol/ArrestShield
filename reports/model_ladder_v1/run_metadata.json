@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "created_at_utc": "2026-08-11T12:33:11.917483+00:00",
+  "git_revision": "adb29a782a61e27151e753807b8cf68f313cb92d",
+  "selected_detector_sha256": "345d9ea58be75be489fe6b695d33c8e73734a0c7f180e22ef2d41e6d4b259796",
+  "selected_detector_bytes": 2792316,
+  "selected_family": "sgd",
+  "deployment_seed": 42
+}
