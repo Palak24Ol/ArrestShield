@@ -1,0 +1,174 @@
+{
+  "registry_version": "1.0.0",
+  "created_at": "2026-08-11",
+  "policy": {
+    "raw_is_immutable": true,
+    "split_unit": "conversation_id",
+    "automatic_download_statuses": ["approved"],
+    "notes": "Synthetic and message data are auxiliary. They must not be the sole frozen test set. No LLM-generated post-detection honeypot dialogue may be used as evidence for the detector decision."
+  },
+  "datasets": [
+    {
+      "id": "indian_cyber_scam_phonecall_hinglish",
+      "source": "huggingface",
+      "repository": "ysangam/Indian_Cyber_Scam_PhoneCall_Hinglish_Dataset",
+      "revision": "8e80dd576610feede6a4c456f95fbd6b8ac13c2c",
+      "license": "Apache-2.0",
+      "status": "approved",
+      "role": ["core_scam_text", "indian_context", "hinglish", "scam_type_seed"],
+      "limitations": ["Dataset card indicates a small corpus despite a broad size-category tag.", "Must be inspected for synthetic templates, duplicate scenarios, and label quality before training.", "Not sufficient as the only evaluation set."],
+      "files": [
+        {"path": "README.md", "url": "https://huggingface.co/datasets/ysangam/Indian_Cyber_Scam_PhoneCall_Hinglish_Dataset/resolve/8e80dd576610feede6a4c456f95fbd6b8ac13c2c/README.md"},
+        {"path": "India_Cyber_Scam_Hinglish_Dataset.csv", "url": "https://huggingface.co/datasets/ysangam/Indian_Cyber_Scam_PhoneCall_Hinglish_Dataset/resolve/8e80dd576610feede6a4c456f95fbd6b8ac13c2c/India_Cyber_Scam_Hinglish_Dataset.csv"}
+      ]
+    },
+    {
+      "id": "indian_multilingual_scam_messages",
+      "source": "huggingface",
+      "repository": "karanverma19/Indian_Multilingual_Scam_Message_Dataset",
+      "revision": "0bb669ca19161381092ef0b4b31812cc7cc5cbda",
+      "license": "Apache-2.0",
+      "status": "approved",
+      "role": ["auxiliary_scam_text", "hindi", "hinglish", "english", "hard_negative_messages"],
+      "limitations": ["Only 120 message-level examples.", "Template-like phrases and inconsistent language/domain fields are visible in the card preview.", "Use for augmentation and tests, not headline evaluation."],
+      "files": [
+        {"path": "README.md", "url": "https://huggingface.co/datasets/karanverma19/Indian_Multilingual_Scam_Message_Dataset/resolve/0bb669ca19161381092ef0b4b31812cc7cc5cbda/README.md"},
+        {"path": "ultra_premium_scam_dataset.csv", "url": "https://huggingface.co/datasets/karanverma19/Indian_Multilingual_Scam_Message_Dataset/resolve/0bb669ca19161381092ef0b4b31812cc7cc5cbda/ultra_premium_scam_dataset.csv"}
+      ]
+    },
+    {
+      "id": "synthetic_scam_dialogue",
+      "source": "huggingface",
+      "repository": "BothBosu/scam-dialogue",
+      "revision": "321b961b5ae353e19ed479b960658dcd223d5e06",
+      "license": "Apache-2.0",
+      "status": "approved",
+      "role": ["multi_turn_scam", "multi_turn_non_scam", "english", "synthetic"],
+      "limitations": ["Fully synthetic; model may learn generation artifacts.", "Ignore repository train/test files and create grouped ArrestShield splits from the all file."],
+      "files": [
+        {"path": "README.md", "url": "https://huggingface.co/datasets/BothBosu/scam-dialogue/resolve/321b961b5ae353e19ed479b960658dcd223d5e06/README.md"},
+        {"path": "scam-dialogue_all.csv", "url": "https://huggingface.co/datasets/BothBosu/scam-dialogue/resolve/321b961b5ae353e19ed479b960658dcd223d5e06/scam-dialogue_all.csv"}
+      ]
+    },
+    {
+      "id": "synthetic_multi_agent_scam_conversation",
+      "source": "huggingface",
+      "repository": "BothBosu/multi-agent-scam-conversation",
+      "revision": "709db2b6c37f424c3070f29138abb33971e21ab9",
+      "license": "Apache-2.0",
+      "status": "approved",
+      "role": ["multi_turn_scam", "english", "synthetic", "conversation_stage_seed"],
+      "limitations": ["Synthetic and potentially overlapping with synthetic_scam_dialogue.", "Run exact and semantic deduplication before any split."],
+      "files": [
+        {"path": "README.md", "url": "https://huggingface.co/datasets/BothBosu/multi-agent-scam-conversation/resolve/709db2b6c37f424c3070f29138abb33971e21ab9/README.md"},
+        {"path": "agent_conversation_all.csv", "url": "https://huggingface.co/datasets/BothBosu/multi-agent-scam-conversation/resolve/709db2b6c37f424c3070f29138abb33971e21ab9/agent_conversation_all.csv"}
+      ]
+    },
+    {
+      "id": "banking77",
+      "source": "github",
+      "repository": "PolyAI-LDN/task-specific-datasets",
+      "revision": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+      "license": "CC-BY-4.0",
+      "status": "approved",
+      "role": ["hard_negative", "legitimate_banking", "english", "keyword_bias_control"],
+      "limitations": ["Single-turn customer queries, not calls.", "Attribution required.", "Do not assume every utterance is safe in an operational sense; its role is legitimate-domain contrast."],
+      "files": [
+        {"path": "train.csv", "url": "https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/57ec275d8078af65b7731c2a98be812d844a6d6b/banking_data/train.csv"},
+        {"path": "test.csv", "url": "https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/57ec275d8078af65b7731c2a98be812d844a6d6b/banking_data/test.csv"}
+      ]
+    },
+    {
+      "id": "daily_dialog",
+      "source": "huggingface",
+      "repository": "roskoN/dailydialog",
+      "revision": "5214b2a66405abf87fd229e5c1007985501ffe3e",
+      "license": "CC-BY-NC-SA-4.0",
+      "status": "approved",
+      "role": ["hard_negative", "legitimate_general_dialogue", "english", "multi_turn"],
+      "limitations": ["Non-commercial and ShareAlike restrictions apply.", "General daily dialogue is not phone-channel data.", "Keep attribution and license boundary in derived releases."],
+      "files": [
+        {"path": "README.md", "url": "https://huggingface.co/datasets/roskoN/dailydialog/resolve/5214b2a66405abf87fd229e5c1007985501ffe3e/README.md"},
+        {"path": "train.zip", "url": "https://huggingface.co/datasets/roskoN/dailydialog/resolve/5214b2a66405abf87fd229e5c1007985501ffe3e/train.zip"},
+        {"path": "validation.zip", "url": "https://huggingface.co/datasets/roskoN/dailydialog/resolve/5214b2a66405abf87fd229e5c1007985501ffe3e/validation.zip"},
+        {"path": "test.zip", "url": "https://huggingface.co/datasets/roskoN/dailydialog/resolve/5214b2a66405abf87fd229e5c1007985501ffe3e/test.zip"}
+      ]
+    },
+    {
+      "id": "schema_guided_dialogue",
+      "source": "github",
+      "repository": "google-research-datasets/dstc8-schema-guided-dialogue",
+      "revision": "e852981ae34990f4358979625854259302feaa78",
+      "license": "CC-BY-SA-4.0",
+      "status": "approved",
+      "role": ["hard_negative", "legitimate_service_dialogue", "banks", "payments", "multi_turn"],
+      "limitations": ["Crowd-worker/simulator task-oriented dialogue, not naturally occurring calls.", "ShareAlike and attribution requirements apply.", "Service/system turns must not be mistaken for authority/scam cues."],
+      "files": [
+        {"path": "repository.zip", "url": "https://github.com/google-research-datasets/dstc8-schema-guided-dialogue/archive/e852981ae34990f4358979625854259302feaa78.zip"}
+      ]
+    },
+    {
+      "id": "hinmix_gold_code_mix",
+      "source": "huggingface",
+      "repository": "kartikagg98/HINMIX_hi-en",
+      "revision": "637e854599bd79fe2fc2e9af55b75d44ad32fc30",
+      "license": "Apache-2.0",
+      "status": "approved",
+      "role": ["language_augmentation", "romanized_hindi", "hinglish", "noise_robustness"],
+      "limitations": ["Parallel/code-mix language data, not scam labels.", "Only gold validation/test and small robustness files are downloaded; 2.45 GB training corpus is deferred."],
+      "files": [
+        {"path": "README.md", "url": "https://huggingface.co/datasets/kartikagg98/HINMIX_hi-en/resolve/637e854599bd79fe2fc2e9af55b75d44ad32fc30/README.md"},
+        {"path": "lcsalign-hicmrom/test.parquet", "url": "https://huggingface.co/datasets/kartikagg98/HINMIX_hi-en/resolve/637e854599bd79fe2fc2e9af55b75d44ad32fc30/lcsalign-hicmrom/test-00000-of-00001.parquet"},
+        {"path": "lcsalign-hicmrom/valid.parquet", "url": "https://huggingface.co/datasets/kartikagg98/HINMIX_hi-en/resolve/637e854599bd79fe2fc2e9af55b75d44ad32fc30/lcsalign-hicmrom/valid-00000-of-00001.parquet"},
+        {"path": "lcsalign-noisyhicmrom/test.parquet", "url": "https://huggingface.co/datasets/kartikagg98/HINMIX_hi-en/resolve/637e854599bd79fe2fc2e9af55b75d44ad32fc30/lcsalign-noisyhicmrom/test-00000-of-00001.parquet"},
+        {"path": "lcsalign-noisyhicmrom/valid.parquet", "url": "https://huggingface.co/datasets/kartikagg98/HINMIX_hi-en/resolve/637e854599bd79fe2fc2e9af55b75d44ad32fc30/lcsalign-noisyhicmrom/valid-00000-of-00001.parquet"}
+      ]
+    },
+    {
+      "id": "indica_telecom_fraud_calls",
+      "source": "huggingface",
+      "repository": "vikrant-vikram/INDICA",
+      "revision": "d163a916c054111bdfb5bca4c690983a08fa9500",
+      "license": "UNSPECIFIED",
+      "status": "blocked_license_and_size",
+      "role": ["future_audio", "future_indic_fraud_calls", "asr_robustness"],
+      "size_bytes": 378602886557,
+      "limitations": ["Dataset page/API does not state a license.", "Full repository is approximately 378.6 GB; Hindi audio alone is approximately 35.4 GB.", "Do not use for training or download automatically until written license terms and a storage budget are approved."],
+      "files": []
+    },
+    {
+      "id": "sonexis_hinglish_speech_v1",
+      "source": "huggingface",
+      "repository": "sonexis-ai/hinglish-code-switched-conversations-v1",
+      "revision": "latest_unpinned_until_access",
+      "license": "CC-BY-NC-4.0",
+      "status": "blocked_gated",
+      "role": ["future_audio", "hinglish", "conversation", "asr_evaluation"],
+      "size_bytes": 117000000,
+      "limitations": ["Requires the user to accept gated access and share contact information on Hugging Face.", "Non-commercial license.", "Not scam-labelled; useful for ASR/context robustness only."],
+      "files": []
+    },
+    {
+      "id": "vishguard_multilingual_vishing",
+      "source": "scientific_data",
+      "repository": "doi:10.1038/s41597-026-07724-z",
+      "revision": "2026_publication",
+      "license": "CC-BY-4.0 article; verify data-record terms",
+      "status": "blocked_data_url_verification",
+      "role": ["future_audio", "vishing", "persuasion_labels", "english"],
+      "limitations": ["3,000 synthetic calls in English, French, and Arabic; not Indic/Hinglish.", "Dataset landing/download URL and data-record license must be verified before acquisition.", "Synthetic audio cannot replace a real/noisy holdout."],
+      "files": []
+    },
+    {
+      "id": "project_authored_arrestshield_corpus",
+      "source": "local_collection",
+      "repository": "C:/ArrestShield/data/external/project_authored_arrestshield_corpus",
+      "revision": "not_started",
+      "license": "Project-owned with consent/provenance per item",
+      "status": "required_not_yet_created",
+      "role": ["primary_digital_arrest", "realistic_hinglish", "tactics", "stages", "frozen_evaluation"],
+      "limitations": ["This is the critical missing dataset and must be authored/collected and independently annotated.", "Public datasets do not provide all ArrestShield task labels or a trustworthy Indian real-call test set."],
+      "files": []
+    }
+  ]
+}

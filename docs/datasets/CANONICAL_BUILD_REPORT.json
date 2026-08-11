@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "stats": {
+    "input_conversations": 62346,
+    "kept_conversations": 52206,
+    "kept_turns": 615084,
+    "excluded_conversations": 10140
+  },
+  "source_conversations": {
+    "indian_cyber_scam_phonecall_hinglish": 10000,
+    "indian_multilingual_scam_messages": 120,
+    "synthetic_scam_dialogue": 1600,
+    "synthetic_multi_agent_scam_conversation": 1600,
+    "banking77": 13083,
+    "daily_dialog": 13118,
+    "schema_guided_dialogue": 22825
+  },
+  "conversation_labels": {
+    "(0, 'non_scam')": 55686,
+    "(1, 'otp_account_takeover')": 345,
+    "(1, 'courier_customs')": 483,
+    "(1, 'digital_arrest')": 3427,
+    "(1, 'fake_kyc_bank')": 493,
+    "(1, 'impersonation_other')": 547,
+    "(1, 'other_scam')": 953,
+    "(1, 'loan_job')": 12,
+    "(1, 'tech_support')": 400
+  },
+  "exact_unique": 52206,
+  "exact_duplicate_sources": {
+    "indian_cyber_scam_phonecall_hinglish": 9257,
+    "indian_multilingual_scam_messages": 71,
+    "synthetic_scam_dialogue": 2,
+    "banking77": 12,
+    "daily_dialog": 798
+  },
+  "raw_template_groups": 52206,
+  "dedup_groups": 51503,
+  "multi_member_dedup_groups": 109,
+  "largest_dedup_group": 161,
+  "near_similarity_edges": 1707,
+  "validation_errors": {},
+  "split_counts": {
+    "train": 36626,
+    "validation": 7819,
+    "test": 7761
+  },
+  "group_leakage_count": 0,
+  "notes": [
+    "Exact duplicates are excluded from conversations.jsonl and turns.jsonl but retained with flags in conversations.all.jsonl.",
+    "High-similarity synthetic conversations remain included but are clustered into one split to prevent paraphrase leakage.",
+    "Positive turn-level tactics/stages from public data are weak_rule labels, never gold.",
+    "Original public train/test splits are retained only as provenance and ignored for ArrestShield splitting.",
+    "HINMIX remains a separate language-robustness source and is not mislabeled as scam/non-scam."
+  ]
+}

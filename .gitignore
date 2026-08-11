@@ -1,0 +1,16 @@
+data/raw/**
+data/external/**
+data/interim/**
+data/processed/**
+data/splits/**
+data/manifests/download_manifest.jsonl
+data/manifests/download_summary.json
+!data/raw/.gitkeep
+!data/external/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+!data/splits/.gitkeep
+*.part
+__pycache__/
+.venv/
+.env

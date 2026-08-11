@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "errors": [],
+  "conversations": 52206,
+  "turns": 615084,
+  "split_counts": {
+    "train": 36626,
+    "validation": 7819,
+    "test": 7761
+  },
+  "source_counts_after_dedup": {
+    "indian_cyber_scam_phonecall_hinglish": 743,
+    "indian_multilingual_scam_messages": 49,
+    "synthetic_scam_dialogue": 1598,
+    "synthetic_multi_agent_scam_conversation": 1600,
+    "banking77": 13071,
+    "daily_dialog": 12320,
+    "schema_guided_dialogue": 22825
+  },
+  "binary_label_counts_after_dedup": {
+    "0": 49950,
+    "1": 2256
+  },
+  "scam_type_counts_after_dedup": {
+    "non_scam": 49950,
+    "otp_account_takeover": 19,
+    "courier_customs": 33,
+    "digital_arrest": 526,
+    "fake_kyc_bank": 53,
+    "impersonation_other": 407,
+    "other_scam": 814,
+    "loan_job": 4,
+    "tech_support": 400
+  },
+  "conversation_label_provenance": {
+    "source_silver": 3990,
+    "source_gold": 48216
+  },
+  "similarity_groups": 51503,
+  "leaking_similarity_groups": 0,
+  "artifacts": {
+    "data/processed/conversations.jsonl": {
+      "bytes": 375735754,
+      "sha256": "4bd54b5a65b7dcd8c5a8ad3b5e04f2309665b2eaca83a1fd64a4b131fc6aee19"
+    },
+    "data/processed/turns.jsonl": {
+      "bytes": 682328862,
+      "sha256": "67836d0a07e33330a07f0cbe67e9a1c068e741aca2d7d4c358135af5e9cf02c9"
+    },
+    "data/splits/split_manifest.json": {
+      "bytes": 8976470,
+      "sha256": "c129a5331aed5f91beed93709787fdbff3d081884c962edc9a12e85da8936ad6"
+    }
+  }
+}

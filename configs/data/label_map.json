@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "scam_types": [
+    "non_scam",
+    "digital_arrest",
+    "fake_kyc_bank",
+    "courier_customs",
+    "otp_account_takeover",
+    "investment",
+    "loan_job",
+    "tech_support",
+    "impersonation_other",
+    "other_scam"
+  ],
+  "tactics": [
+    "authority_impersonation",
+    "accusation",
+    "fear_threat",
+    "urgency",
+    "secrecy",
+    "isolation",
+    "surveillance_control",
+    "financial_demand",
+    "credential_otp_request"
+  ],
+  "stages": [
+    "contact",
+    "authority_claim",
+    "accusation",
+    "threat",
+    "isolation_control",
+    "payment_extraction",
+    "post_payment",
+    "none_unknown"
+  ],
+  "label_provenance": ["source_gold", "source_silver", "weak_rule", "unlabeled"]
+}
