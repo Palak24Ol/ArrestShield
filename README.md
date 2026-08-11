@@ -18,6 +18,24 @@ Run `python scripts/download_datasets.py --registry data/manifests/dataset_regis
 to fetch the approved seed data. Large, gated, or license-unverified datasets
 are recorded in the registry but are not downloaded automatically.
 
+## Current ML milestone
+
+The first executable model is a multilingual word/character TF-IDF baseline
+with a class-balanced linear classifier. It uses the fixed conversation-group
+train/validation/test manifest, chooses its operating threshold on validation
+only, and measures early detection on incremental conversation prefixes.
+
+```powershell
+py -3.10 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements\dev.txt
+.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
+.venv\Scripts\python.exe scripts\train_baseline.py
+```
+
+See `docs/models/BASELINE_TRAINING.md` for the protocol, artifact layout, and
+limitations. Fine-grained scam type, manipulation tactic, and scam stage heads
+will be trained only after enough human-reviewed labels are available.
+
 ## Important boundary
 
 The detector will be trained and evaluated from versioned ML datasets. An LLM

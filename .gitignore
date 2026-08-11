@@ -14,3 +14,10 @@ data/manifests/download_summary.json
 __pycache__/
 .venv/
 .env
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+artifacts/models/**
+!artifacts/models/.gitkeep
+reports/tmp/
