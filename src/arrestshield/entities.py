@@ -153,7 +153,9 @@ def extract_entities(text: str) -> list[ExtractedEntity]:
             _candidate("email", match, f"{local.casefold()}@{domain.casefold()}", f"***@{domain.casefold()}", 0.99, True)
         )
 
-    upi_pattern = re.compile(r"(?i)(?<![\w.-])[a-z0-9._-]{2,100}@([a-z][a-z0-9]{1,30})(?![\w.-])")
+    upi_pattern = re.compile(
+        r"(?i)(?<![\w.-])[a-z0-9._-]{2,100}@([a-z][a-z0-9]{1,30})(?![\w-]|\.[a-z0-9])"
+    )
     for match in upi_pattern.finditer(text):
         handle = match.group(1).casefold()
         if handle not in UPI_HANDLES:

@@ -106,6 +106,24 @@ def _stage_progress(tactic_hits: Mapping[str, float]) -> float:
     return max(stage_values)
 
 
+def lexical_signal_summary(text: str) -> dict[str, Any]:
+    """Expose transparent rule signals without calling them model predictions."""
+    raw_counts = {
+        name: _pattern_hit_count(text, patterns)
+        for name, patterns in LEXICAL_TACTICS.items()
+    }
+    return {
+        "signal_source": "deterministic_lexical_rules",
+        "tactics": {
+            name: {"present": count > 0, "hit_count": int(count)}
+            for name, count in raw_counts.items()
+        },
+        "stage_progress": _stage_progress(raw_counts),
+        "not_transformer_predictions": True,
+        "llm_used": False,
+    }
+
+
 def risk_feature_row(text: str, base_scam_score: float) -> np.ndarray:
     if not 0.0 <= float(base_scam_score) <= 1.0:
         raise ValueError("base_scam_score must be in [0, 1]")

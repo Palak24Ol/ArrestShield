@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "service": {
+    "name": "ArrestShield ML API",
+    "version": "1.0.0",
+    "host": "127.0.0.1",
+    "port": 8000
+  },
+  "models": {
+    "base_detector_path": "artifacts/models/model_ladder_v1/selected_detector.joblib",
+    "risk_fusion_path": "artifacts/models/risk_fusion_v1/risk_fusion.joblib"
+  },
+  "policy": {
+    "detector_status": "research_only_not_promoted",
+    "allow_research_fusion": true,
+    "enable_honeypot_handoff": false,
+    "maximum_turns": 100,
+    "maximum_characters": 50000
+  },
+  "asr": {
+    "enabled": true,
+    "backend": "whisper_tiny_multilingual",
+    "config_path": "configs/model/asr_backends.json"
+  },
+  "security": {
+    "bind_publicly": false,
+    "raw_sensitive_entities_default": false,
+    "audio_upload_written_to_temporary_directory": true,
+    "temporary_audio_deleted_after_request": true
+  },
+  "boundaries": {
+    "llm_used_for_detection": false,
+    "api_invokes_honeypot": false,
+    "honeypot_is_separate_downstream_service": true
+  }
+}

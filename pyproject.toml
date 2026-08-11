@@ -17,10 +17,13 @@ dependencies = [
   "torch==2.5.1",
   "transformers==4.48.3",
   "xgboost==2.1.4",
+  "fastapi==0.115.6",
+  "uvicorn==0.32.1",
+  "python-multipart==0.0.20",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest==8.3.5"]
+dev = ["pytest==8.3.5", "httpx==0.28.1"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

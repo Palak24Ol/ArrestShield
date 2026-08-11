@@ -34,7 +34,7 @@ def test_context_prevents_arbitrary_numbers_from_becoming_accounts() -> None:
 
 
 def test_email_and_upi_are_disambiguated() -> None:
-    entities = extract_entities("Write to help@example.org or pay shield@ybl")
+    entities = extract_entities("Write to help@example.org or pay shield@ybl.")
     counts = entity_type_counts(entities)
     assert counts == {"email": 1, "upi_id": 1}
 
@@ -43,4 +43,3 @@ def test_url_span_excludes_sentence_punctuation() -> None:
     text = "Open https://example.org/pay). Then stop."
     entity = next(item for item in extract_entities(text) if item.entity_type == "url")
     assert text[entity.start : entity.end] == "https://example.org/pay"
-
