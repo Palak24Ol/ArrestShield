@@ -11,6 +11,8 @@ The ASR component converts audio to text. It does not decide whether a call is a
 
 Registration is not evidence that one backend is better. Backend promotion requires the selection-only audio validation corpus.
 
+The adapter uses Whisper's native long-form segmentation rather than Transformers 4.48.3's external chunk iterator. This preserves the attention mask required when the padding and end-of-sequence token are identical. Task and optional language are supplied per request, and redundant checkpoint `forced_decoder_ids` are cleared to avoid conflicting decoder prompts.
+
 ## Audio validation corpus
 
 Each JSONL record must conform to `configs/data/audio_validation_record.schema.json`. Audio must be consented or appropriately licensed, manually transcribed, PII-redacted, and assigned to `audio_validation`. The manifest must contain both scam and non-scam calls and must represent English, Hindi, and Hinglish plus more than one source group. Project-relative paths are enforced to prevent accidental arbitrary file access.

@@ -176,11 +176,23 @@ class WhisperASR:
             "task": "automatic-speech-recognition",
             "model": self.model_source,
             "device": -1,
-            "chunk_length_s": float(self.audio_config["chunk_length_seconds"]),
         }
         if dtype is not None:
             kwargs["torch_dtype"] = dtype
         self._pipeline = factory(**kwargs)
+        # Transformers' external chunk iterator omits Whisper attention masks
+        # in 4.48.3. Let Whisper perform its native long-form segmentation so
+        # the pipeline supplies an explicit mask. We also pass task/language on
+        # every request, so checkpoint-level forced IDs are redundant and emit
+        # a conflict warning unless cleared.
+        model = getattr(self._pipeline, "model", None)
+        for owner in (
+            getattr(model, "generation_config", None),
+            getattr(model, "config", None),
+            getattr(self._pipeline, "generation_config", None),
+        ):
+            if owner is not None and hasattr(owner, "forced_decoder_ids"):
+                owner.forced_decoder_ids = None
         return self._pipeline
 
     def transcribe(self, audio_path: Path, language_hint: str | None = None) -> ASRResult:

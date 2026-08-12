@@ -81,6 +81,35 @@ def test_whisper_adapter_is_lazy_and_never_marks_llm_usage(tmp_path: Path) -> No
     assert result.text == "aapka account block hoga"
     assert result.llm_used is False
     assert captured["load"]["task"] == "automatic-speech-recognition"
+    assert "chunk_length_s" not in captured["load"]
     assert captured["call"]["generate_kwargs"] == {"task": "transcribe", "language": "hi"}
     with pytest.raises(ValueError, match="does not declare language"):
         transcriber.transcribe(audio, language_hint="fr")
+
+
+def test_whisper_load_clears_redundant_forced_decoder_ids(tmp_path: Path) -> None:
+    class Config:
+        forced_decoder_ids = [[1, None], [2, 50359]]
+
+    class Pipeline:
+        model = type("Model", (), {"generation_config": Config(), "config": Config()})()
+        generation_config = Config()
+
+    pipeline = Pipeline()
+    transcriber = WhisperASR(
+        "fake",
+        {
+            "enabled": True,
+            "model_id": "fake/whisper",
+            "local_pretrained_path": "missing",
+            "languages": ["en"],
+            "task": "transcribe",
+        },
+        AUDIO_CONFIG,
+        tmp_path,
+        pipeline_factory=lambda **kwargs: pipeline,
+    )
+    assert transcriber.load() is pipeline
+    assert pipeline.model.generation_config.forced_decoder_ids is None
+    assert pipeline.model.config.forced_decoder_ids is None
+    assert pipeline.generation_config.forced_decoder_ids is None
