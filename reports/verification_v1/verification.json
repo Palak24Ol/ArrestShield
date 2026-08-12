@@ -1,0 +1,239 @@
+{
+  "schema_version": "1.0.0",
+  "root": "C:\\ArrestShield",
+  "require_multitask": true,
+  "status": "passed",
+  "counts": {
+    "checks": 28,
+    "passed": 28,
+    "failed": 0,
+    "skipped": 0
+  },
+  "checks": [
+    {
+      "name": "data:data/processed/conversations.jsonl",
+      "status": "passed",
+      "path": "data/processed/conversations.jsonl",
+      "expected": "4bd54b5a65b7dcd8c5a8ad3b5e04f2309665b2eaca83a1fd64a4b131fc6aee19",
+      "actual": "4bd54b5a65b7dcd8c5a8ad3b5e04f2309665b2eaca83a1fd64a4b131fc6aee19",
+      "detail": null
+    },
+    {
+      "name": "data:data/processed/turns.jsonl",
+      "status": "passed",
+      "path": "data/processed/turns.jsonl",
+      "expected": "67836d0a07e33330a07f0cbe67e9a1c068e741aca2d7d4c358135af5e9cf02c9",
+      "actual": "67836d0a07e33330a07f0cbe67e9a1c068e741aca2d7d4c358135af5e9cf02c9",
+      "detail": null
+    },
+    {
+      "name": "data:data/splits/split_manifest.json",
+      "status": "passed",
+      "path": "data/splits/split_manifest.json",
+      "expected": "c129a5331aed5f91beed93709787fdbff3d081884c962edc9a12e85da8936ad6",
+      "actual": "c129a5331aed5f91beed93709787fdbff3d081884c962edc9a12e85da8936ad6",
+      "detail": null
+    },
+    {
+      "name": "baseline-v1-model",
+      "status": "passed",
+      "path": "artifacts/models/baseline_v1/model.joblib",
+      "expected": "ec441b9ea3eab2a2cd23f917c40b97f9c6d06ed03b2daf49710302e905438d76",
+      "actual": "ec441b9ea3eab2a2cd23f917c40b97f9c6d06ed03b2daf49710302e905438d76",
+      "detail": null
+    },
+    {
+      "name": "baseline-llm-boundary",
+      "status": "passed",
+      "path": "artifacts/models/baseline_v1/metadata.json",
+      "expected": "No LLM in decision boundary",
+      "actual": "This trained detector decides scam risk. No LLM is called by this model or used to choose the scam label.",
+      "detail": null
+    },
+    {
+      "name": "selected-classical-detector",
+      "status": "passed",
+      "path": "artifacts/models/model_ladder_v1/selected_detector.joblib",
+      "expected": "345d9ea58be75be489fe6b695d33c8e73734a0c7f180e22ef2d41e6d4b259796",
+      "actual": "345d9ea58be75be489fe6b695d33c8e73734a0c7f180e22ef2d41e6d4b259796",
+      "detail": null
+    },
+    {
+      "name": "risk-fusion-model",
+      "status": "passed",
+      "path": "artifacts/models/risk_fusion_v1/risk_fusion.joblib",
+      "expected": "d99e91170f20da7e89ae85e8f0fb35afd9965d4dde9fdc7e8f6e1ed0bb0e6461",
+      "actual": "d99e91170f20da7e89ae85e8f0fb35afd9965d4dde9fdc7e8f6e1ed0bb0e6461",
+      "detail": null
+    },
+    {
+      "name": "risk-fusion-llm-boundary",
+      "status": "passed",
+      "path": "reports/risk_fusion_v1/run_metadata.json",
+      "expected": false,
+      "actual": false,
+      "detail": null
+    },
+    {
+      "name": "risk-fusion-promotion-status",
+      "status": "passed",
+      "path": "reports/risk_fusion_v1/run_metadata.json",
+      "expected": "research_only_not_promoted",
+      "actual": "research_only_not_promoted",
+      "detail": null
+    },
+    {
+      "name": "whisper:added_tokens.json",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/added_tokens.json",
+      "expected": "9715fd2243b6f06a5858b5e32950d2853f73dd5bc201aafcf76f5082a2d8acd1",
+      "actual": "9715fd2243b6f06a5858b5e32950d2853f73dd5bc201aafcf76f5082a2d8acd1",
+      "detail": null
+    },
+    {
+      "name": "whisper:config.json",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/config.json",
+      "expected": "ffdccec4f3211f4c63310f2b7098f309fe70f3952cedc5e4d11e43f5b2379b98",
+      "actual": "ffdccec4f3211f4c63310f2b7098f309fe70f3952cedc5e4d11e43f5b2379b98",
+      "detail": null
+    },
+    {
+      "name": "whisper:generation_config.json",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/generation_config.json",
+      "expected": "a5d5325911f16e74001a72fa13d6e208eee51548f994646de1f4b4cc8b35b512",
+      "actual": "a5d5325911f16e74001a72fa13d6e208eee51548f994646de1f4b4cc8b35b512",
+      "detail": null
+    },
+    {
+      "name": "whisper:merges.txt",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/merges.txt",
+      "expected": "2df2990a395e35e8dfbc7511e08c12d56018d8d04691e0133e5d63b21e154dc6",
+      "actual": "2df2990a395e35e8dfbc7511e08c12d56018d8d04691e0133e5d63b21e154dc6",
+      "detail": null
+    },
+    {
+      "name": "whisper:model.safetensors",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/model.safetensors",
+      "expected": "7ebd0e69e78190ffe1438491fa05cc1f5c1aa3a4c4db3bc1723adbb551ea2395",
+      "actual": "7ebd0e69e78190ffe1438491fa05cc1f5c1aa3a4c4db3bc1723adbb551ea2395",
+      "detail": null
+    },
+    {
+      "name": "whisper:normalizer.json",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/normalizer.json",
+      "expected": "bf1c507dc8724ca9cf9903640dacfb69dae2f00edee4f21ceba106a7392f26dd",
+      "actual": "bf1c507dc8724ca9cf9903640dacfb69dae2f00edee4f21ceba106a7392f26dd",
+      "detail": null
+    },
+    {
+      "name": "whisper:preprocessor_config.json",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/preprocessor_config.json",
+      "expected": "9b5cd03a36fbb8a627c64d98a5b5b126ead95a77720723944487311f0110b666",
+      "actual": "9b5cd03a36fbb8a627c64d98a5b5b126ead95a77720723944487311f0110b666",
+      "detail": null
+    },
+    {
+      "name": "whisper:special_tokens_map.json",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/special_tokens_map.json",
+      "expected": "e67ae3a0aaa99abcd9f187138e12db1f65c16a14761c50ef10eef2c174a7a691",
+      "actual": "e67ae3a0aaa99abcd9f187138e12db1f65c16a14761c50ef10eef2c174a7a691",
+      "detail": null
+    },
+    {
+      "name": "whisper:tokenizer.json",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/tokenizer.json",
+      "expected": "27fc476bfe7f17299480be2273fc0608e4d5a99aba2ab5dec5374b4482d1a566",
+      "actual": "27fc476bfe7f17299480be2273fc0608e4d5a99aba2ab5dec5374b4482d1a566",
+      "detail": null
+    },
+    {
+      "name": "whisper:tokenizer_config.json",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/tokenizer_config.json",
+      "expected": "2a4c4281cf9f51ac6ccc406fdc711a087afe6530f671fa7b80953edc498275ce",
+      "actual": "2a4c4281cf9f51ac6ccc406fdc711a087afe6530f671fa7b80953edc498275ce",
+      "detail": null
+    },
+    {
+      "name": "whisper:vocab.json",
+      "status": "passed",
+      "path": "artifacts/pretrained/whisper-tiny/vocab.json",
+      "expected": "8f680bba319e01a653d2e8a5dbc17a9157179e0576e6ce74ce0c06356c6e24f9",
+      "actual": "8f680bba319e01a653d2e8a5dbc17a9157179e0576e6ce74ce0c06356c6e24f9",
+      "detail": null
+    },
+    {
+      "name": "classical-multitask-manifest",
+      "status": "passed",
+      "path": "artifacts/models/classical_multitask_v1/manifest.json",
+      "expected": "17ab3c7d031a817d4f052a69e5b1ad3498f489301754e25f562a5a381fae4984",
+      "actual": "17ab3c7d031a817d4f052a69e5b1ad3498f489301754e25f562a5a381fae4984",
+      "detail": null
+    },
+    {
+      "name": "classical-multitask-heads",
+      "status": "passed",
+      "path": "artifacts/models/classical_multitask_v1/classical_multitask_heads.joblib",
+      "expected": "e99795422b9ff4a3a353c77cd3cfeda121b2c458d28ecdd0555aecc19ff366f2",
+      "actual": "e99795422b9ff4a3a353c77cd3cfeda121b2c458d28ecdd0555aecc19ff366f2",
+      "detail": null
+    },
+    {
+      "name": "classical-multitask-llm-boundary",
+      "status": "passed",
+      "path": "artifacts/models/classical_multitask_v1/manifest.json",
+      "expected": false,
+      "actual": false,
+      "detail": null
+    },
+    {
+      "name": "classical-multitask-auxiliary-only",
+      "status": "passed",
+      "path": "artifacts/models/classical_multitask_v1/manifest.json",
+      "expected": false,
+      "actual": false,
+      "detail": null
+    },
+    {
+      "name": "human-gold-status-truthful",
+      "status": "passed",
+      "path": "data/human_test/COLLECTION_STATUS.json",
+      "expected": false,
+      "actual": false,
+      "detail": null
+    },
+    {
+      "name": "audio-validation-status-truthful",
+      "status": "passed",
+      "path": "data/audio_validation/COLLECTION_STATUS.json",
+      "expected": false,
+      "actual": false,
+      "detail": null
+    },
+    {
+      "name": "api-llm-boundary",
+      "status": "passed",
+      "path": "configs/deployment/api.json",
+      "expected": false,
+      "actual": false,
+      "detail": null
+    },
+    {
+      "name": "honeypot-handoff-disabled",
+      "status": "passed",
+      "path": "configs/deployment/api.json",
+      "expected": false,
+      "actual": false,
+      "detail": null
+    }
+  ],
+  "created_at_utc": "2026-08-12T09:52:11.629095+00:00"
+}

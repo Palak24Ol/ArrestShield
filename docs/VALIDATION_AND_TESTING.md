@@ -4,7 +4,7 @@
 
 The suite covers canonical data loading, split and provenance rules, threshold selection, stable early detection, source-aware model-ladder utilities, causal prefix labels, tactic masks, head-tail tokenization, frozen human-test gates, ASR validation and metrics, entity redaction, risk feature contracts, inference policy, FastAPI request validation, and exported transformer output formatting.
 
-Tests use small deterministic fixtures and mocked models for logic. Real-artifact smokes separately verify saved joblib reconstruction, local Whisper decoding, API OpenAPI generation, and—after training—exported transformer reconstruction. A passing unit suite is necessary but not evidence of model quality.
+Tests use small deterministic fixtures and mocked models for logic. Real-artifact smokes separately verify saved joblib reconstruction, local Whisper decoding, API OpenAPI generation, completed classical multi-task reconstruction, and optional exported-transformer reconstruction. The classical trainer also tests bounded transform batches, sparse-label probability alignment, unsupported labels, and artifact path/hash contracts. A passing unit suite is necessary but not evidence of model quality.
 
 ## Model evaluation gates
 
@@ -32,7 +32,7 @@ Ablations use the same conversation splits, seeds, training budget, hard-negativ
 | `no_lexical_fusion` | Remove all deterministic tactic/stage signals | Are lexical rules driving apparent performance? |
 | `reference_transcript` | Detect from manual transcript rather than ASR text | How much detection loss is attributable to ASR? |
 
-The transformer ablations are GPU-comparison work after the primary feasibility run and human-label improvement. On this CPU laptop, running nine additional three-seed transformer fits would delay the required full model without strengthening the missing human-gold evidence. The exact variants remain fixed here before such compute is acquired.
+The transformer ablations are GPU-comparison work after the completed laptop model and human-label improvement. Running nine additional three-seed transformer fits on this CPU laptop would consume disproportionate time and storage without strengthening the missing human-gold evidence. The exact variants remain fixed here before such compute is acquired.
 
 ## Required edge cases
 

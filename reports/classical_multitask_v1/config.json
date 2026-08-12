@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "arrestshield-multilingual-classical-multitask-v1",
+  "selection_role": "research_only_auxiliary",
+  "seeds": [
+    17,
+    42,
+    93
+  ],
+  "deployment_seed": 42,
+  "label_config_path": "configs/model/multitask_transformer.json",
+  "shared_representation": {
+    "feature_union_path": "artifacts/models/model_ladder_v1/feature_union.joblib",
+    "svd_path": "artifacts/models/model_ladder_v1/svd.joblib",
+    "binary_detector_path": "artifacts/models/model_ladder_v1/selected_detector.joblib",
+    "fit_scope": "training_split_only",
+    "transform_batch_size": 256,
+    "minimum_free_disk_gb": 2.0
+  },
+  "xgboost": {
+    "n_estimators": 300,
+    "learning_rate": 0.05,
+    "max_depth": 4,
+    "min_child_weight": 2.0,
+    "subsample": 0.85,
+    "colsample_bytree": 0.85,
+    "reg_alpha": 0.1,
+    "reg_lambda": 2.0,
+    "early_stopping_rounds": 30,
+    "tree_method": "hist",
+    "n_jobs": 4,
+    "maximum_class_weight": 12.0
+  },
+  "tactics": {
+    "minimum_positive_training_examples": 20,
+    "threshold_selection": "maximum_validation_f1_then_precision_recall_threshold"
+  },
+  "evaluation": {
+    "selection_split": "validation",
+    "test_used_for_selection": false,
+    "report_zero_support_classes": true
+  },
+  "llm_used_for_detection": false
+}

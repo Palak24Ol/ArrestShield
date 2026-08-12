@@ -1,15 +1,17 @@
-# Multilingual multi-task transformer
+# Optional multilingual multi-task transformer comparison
 
 ## Role and status
 
-The transformer is a trained ML detector with four heads:
+The transformer implementation is an optional controlled comparison with four heads:
 
 1. binary scam probability;
 2. single-label scam type;
 3. multi-label manipulation/operational tactics;
 4. single-label current scam stage.
 
-The current local backbone is `distilbert-base-multilingual-cased`. It is a CPU feasibility harness because the preferred IndicBERT checkpoint is gated/unavailable and the registered HingRoBERTa-Mixed, MuRIL, and XLM-R comparison requires GPU compute. A DistilBERT result must not be generalized into a claim that the registered candidates are better or worse.
+The implementation and exact-resume path have been recovery-tested with `distilbert-base-multilingual-cased`. A full local CPU fit was deliberately stopped when it proved impractical for the available disk, memory, and runtime; it is not the configured API backend and no transformer quality result is claimed. The deployed laptop path instead uses the completed compact XGBoost auxiliary heads documented in `reports/classical_multitask_v1/RESULTS.md`.
+
+The preferred future comparison ladder registers HingRoBERTa-Mixed, MuRIL, and XLM-R and must give each candidate the same seeds, split, optimization budget, and fixed-FPR selection rule. IndicBERT may be added only when a usable checkpoint and tokenizer are pinned. Downstream detection performance must be compared after ASR because romanization changes the encoder input distribution. A DistilBERT feasibility result must not be generalized into a claim that any registered candidate is better or worse.
 
 No LLM supplies an input feature, target, prediction, threshold, checkpoint decision, or final scam label.
 
@@ -46,7 +48,7 @@ For every seed/epoch, the threshold is selected only on the validation primary v
 
 Tactic metrics cover observed positives versus confirmed non-scam negatives and are explicitly not presented as fully supervised tactic classification. The current silver tactic/stage targets cannot support a production psychological-analysis claim.
 
-## Resumable CPU training
+## Resumable training
 
 The trainer writes `artifacts/models/multitask_transformer_v1/training_checkpoint.pt` atomically every ten optimizer updates and at epoch/seed boundaries. It contains:
 
@@ -76,4 +78,4 @@ The trainer reloads this export before final validation/test scoring. `MultiTask
 .venv\Scripts\python.exe scripts\train_multitask_transformer.py
 ```
 
-Generated weights and recovery checkpoints are local and Git-ignored. Only compact configuration, metrics, run metadata, artifact hashes, and candid limitations are committed.
+This command is optional for the current laptop deployment and should normally be run on a GPU-capable machine. Generated weights and recovery checkpoints are local and Git-ignored. Only compact configuration, metrics, run metadata, artifact hashes, and candid limitations are committed.

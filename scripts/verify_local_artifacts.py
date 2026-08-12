@@ -18,7 +18,16 @@ from arrestshield.verification import verify_local_artifacts  # noqa: E402
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--allow-incomplete-transformer", action="store_true")
+    parser.add_argument(
+        "--allow-incomplete-multitask",
+        "--allow-incomplete-transformer",
+        dest="allow_incomplete_multitask",
+        action="store_true",
+        help=(
+            "Skip the completed multi-task artifact requirement. The old transformer "
+            "option name remains as a compatibility alias."
+        ),
+    )
     parser.add_argument(
         "--output",
         type=Path,
@@ -27,7 +36,7 @@ def main() -> int:
     args = parser.parse_args()
     report = verify_local_artifacts(
         PROJECT_ROOT,
-        require_transformer=not args.allow_incomplete_transformer,
+        require_multitask=not args.allow_incomplete_multitask,
     )
     report["created_at_utc"] = datetime.now(timezone.utc).isoformat()
     write_json(args.output, report)

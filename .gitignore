@@ -14,6 +14,7 @@ data/manifests/download_summary.json
 __pycache__/
 .venv/
 .env
+.claude/settings.local.json
 *.py[cod]
 .pytest_cache/
 .coverage

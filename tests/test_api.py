@@ -31,6 +31,7 @@ def test_health_model_and_text_contract() -> None:
     model = api.get("/v1/model")
     assert model.status_code == 200
     assert model.json()["llm_used_for_detection"] is False
+    assert model.json()["multitask_backend"] == "none"
 
     response = api.post(
         "/v1/detect/text",

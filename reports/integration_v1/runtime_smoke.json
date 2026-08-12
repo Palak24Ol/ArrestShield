@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "created_at_utc": "2026-08-12T09:57:23.9573232Z",
+  "purpose": "real_local_artifact_runtime_smoke",
+  "text_request": {
+    "multitask_backend": "classical",
+    "multitask_auxiliary_loaded": true,
+    "is_scam": true,
+    "scam_score": 0.9894906878471375,
+    "decision_source": "trained_xgboost_risk_fusion",
+    "scam_type": "digital_arrest",
+    "upi_value": "***@ybl",
+    "upi_redacted": true,
+    "honeypot_invoked": false,
+    "llm_used_for_detection": false
+  },
+  "audio_request": {
+    "http_status": 200,
+    "backend": "whisper_tiny_multilingual",
+    "transcript": "And so my fellow Americans ask not what your country can do for you, ask what you can do for your country.",
+    "temporary_audio_path_after_request": "temporary_upload_deleted",
+    "is_scam": false,
+    "decision_source": "trained_xgboost_risk_fusion",
+    "honeypot_invoked": false,
+    "llm_used_for_detection": false
+  },
+  "limitations": [
+    "The audio request is an English functionality smoke, not a Hindi or Hinglish ASR benchmark.",
+    "The detector remains research_only_not_promoted because strict source and human-gold gates do not pass."
+  ]
+}

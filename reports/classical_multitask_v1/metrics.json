@@ -1,0 +1,1451 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "arrestshield-multilingual-classical-multitask-v1",
+  "selection_role": "research_only_auxiliary",
+  "selection_split": "validation",
+  "test_used_for_selection": false,
+  "data": {
+    "train_conversations_after_source_balance": 5803,
+    "causal_train_windows": 11279,
+    "validation_conversations": 7819,
+    "test_conversations": 7761,
+    "conversation_safe_split": true,
+    "representation_fit_scope": "training_split_only",
+    "transform_batch_size": 256,
+    "initial_free_disk_gb": 2.895549774169922,
+    "post_transform_free_disk_gb": 2.89306640625,
+    "scam_type_train_counts": {
+      "non_scam": 7225,
+      "digital_arrest": 363,
+      "fake_kyc_bank": 39,
+      "courier_customs": 23,
+      "otp_account_takeover": 15,
+      "impersonation_other": 915,
+      "tech_support": 930,
+      "loan_job": 2,
+      "other_scam": 1767
+    },
+    "stage_observed_train_counts": {
+      "none_unknown": 7466,
+      "contact": 735,
+      "authority_claim": 152,
+      "accusation": 14,
+      "threat": 31,
+      "isolation_control": 166,
+      "payment_extraction": 2637
+    },
+    "tactic_positive_train_counts": {
+      "authority_impersonation": 1073,
+      "phantom_riches": 0,
+      "fear_intimidation": 560,
+      "liking": 0,
+      "urgency_scarcity": 1187,
+      "pretext_trust": 0,
+      "reciprocity": 0,
+      "consistency_commitment": 0,
+      "social_proof": 0,
+      "accusation": 288,
+      "secrecy_instruction": 86,
+      "isolation_instruction": 273,
+      "surveillance_control": 233,
+      "financial_demand": 1763,
+      "credential_request": 1800
+    }
+  },
+  "supported_tactics": [
+    "authority_impersonation",
+    "fear_intimidation",
+    "urgency_scarcity",
+    "accusation",
+    "secrecy_instruction",
+    "isolation_instruction",
+    "surveillance_control",
+    "financial_demand",
+    "credential_request"
+  ],
+  "unsupported_tactics": [
+    "phantom_riches",
+    "liking",
+    "pretext_trust",
+    "reciprocity",
+    "consistency_commitment",
+    "social_proof"
+  ],
+  "runs": [
+    {
+      "seed": 17,
+      "scam_type": {
+        "validation": {
+          "examples": 7819,
+          "macro_f1_all_manifest_classes": 0.8160146636444477,
+          "weighted_f1": 0.9985653101304942,
+          "per_class": {
+            "non_scam": {
+              "precision": 0.9997348183505701,
+              "recall": 1.0,
+              "f1-score": 0.9998673915926269,
+              "support": 7540.0
+            },
+            "digital_arrest": {
+              "precision": 1.0,
+              "recall": 0.9655172413793104,
+              "f1-score": 0.9824561403508771,
+              "support": 87.0
+            },
+            "fake_kyc_bank": {
+              "precision": 0.6,
+              "recall": 0.6666666666666666,
+              "f1-score": 0.631578947368421,
+              "support": 9.0
+            },
+            "courier_customs": {
+              "precision": 0.7142857142857143,
+              "recall": 0.8333333333333334,
+              "f1-score": 0.7692307692307693,
+              "support": 6.0
+            },
+            "otp_account_takeover": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "impersonation_other": {
+              "precision": 1.0,
+              "recall": 0.9787234042553191,
+              "f1-score": 0.989247311827957,
+              "support": 47.0
+            },
+            "tech_support": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 39.0
+            },
+            "loan_job": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0,
+              "support": 1.0
+            },
+            "other_scam": {
+              "precision": 0.9662921348314607,
+              "recall": 0.9772727272727273,
+              "f1-score": 0.9717514124293786,
+              "support": 88.0
+            }
+          }
+        },
+        "test_supporting_only": {
+          "examples": 7761,
+          "macro_f1_all_manifest_classes": 0.8025564386620118,
+          "weighted_f1": 0.9990373154257745,
+          "per_class": {
+            "non_scam": {
+              "precision": 0.9998656455730216,
+              "recall": 1.0,
+              "f1-score": 0.9999328182734296,
+              "support": 7442.0
+            },
+            "digital_arrest": {
+              "precision": 0.9736842105263158,
+              "recall": 0.9736842105263158,
+              "f1-score": 0.9736842105263158,
+              "support": 76.0
+            },
+            "fake_kyc_bank": {
+              "precision": 0.6,
+              "recall": 0.6,
+              "f1-score": 0.6,
+              "support": 5.0
+            },
+            "courier_customs": {
+              "precision": 1.0,
+              "recall": 0.75,
+              "f1-score": 0.8571428571428571,
+              "support": 4.0
+            },
+            "otp_account_takeover": {
+              "precision": 0.6666666666666666,
+              "recall": 1.0,
+              "f1-score": 0.8,
+              "support": 2.0
+            },
+            "impersonation_other": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 51.0
+            },
+            "tech_support": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 51.0
+            },
+            "loan_job": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0,
+              "support": 1.0
+            },
+            "other_scam": {
+              "precision": 0.9922480620155039,
+              "recall": 0.9922480620155039,
+              "f1-score": 0.9922480620155039,
+              "support": 129.0
+            }
+          }
+        }
+      },
+      "stage": {
+        "validation": {
+          "examples": 7817,
+          "macro_f1_all_manifest_classes": 0.8285466363279477,
+          "weighted_f1": 0.9955641629709452,
+          "per_class": {
+            "none_unknown": {
+              "precision": 0.9998673915926269,
+              "recall": 1.0,
+              "f1-score": 0.9999336913997745,
+              "support": 7540.0
+            },
+            "contact": {
+              "precision": 0.9130434782608695,
+              "recall": 0.7590361445783133,
+              "f1-score": 0.8289473684210527,
+              "support": 83.0
+            },
+            "authority_claim": {
+              "precision": 0.6451612903225806,
+              "recall": 0.9523809523809523,
+              "f1-score": 0.7692307692307693,
+              "support": 21.0
+            },
+            "accusation": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 3.0
+            },
+            "threat": {
+              "precision": 1.0,
+              "recall": 0.8333333333333334,
+              "f1-score": 0.9090909090909091,
+              "support": 6.0
+            },
+            "isolation_control": {
+              "precision": 0.3333333333333333,
+              "recall": 0.375,
+              "f1-score": 0.35294117647058826,
+              "support": 8.0
+            },
+            "payment_extraction": {
+              "precision": 0.9308176100628931,
+              "recall": 0.9487179487179487,
+              "f1-score": 0.9396825396825397,
+              "support": 156.0
+            }
+          }
+        },
+        "test_supporting_only": {
+          "examples": 7756,
+          "macro_f1_all_manifest_classes": 0.8373553277616745,
+          "weighted_f1": 0.9952789833506646,
+          "per_class": {
+            "none_unknown": {
+              "precision": 0.9998656455730216,
+              "recall": 1.0,
+              "f1-score": 0.9999328182734296,
+              "support": 7442.0
+            },
+            "contact": {
+              "precision": 0.8360655737704918,
+              "recall": 0.7285714285714285,
+              "f1-score": 0.7786259541984732,
+              "support": 70.0
+            },
+            "authority_claim": {
+              "precision": 0.7407407407407407,
+              "recall": 0.9523809523809523,
+              "f1-score": 0.8333333333333334,
+              "support": 21.0
+            },
+            "accusation": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "threat": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 9.0
+            },
+            "isolation_control": {
+              "precision": 0.20833333333333334,
+              "recall": 0.5555555555555556,
+              "f1-score": 0.30303030303030304,
+              "support": 9.0
+            },
+            "payment_extraction": {
+              "precision": 0.9789473684210527,
+              "recall": 0.916256157635468,
+              "f1-score": 0.9465648854961832,
+              "support": 203.0
+            }
+          }
+        }
+      },
+      "tactics": {
+        "authority_impersonation": {
+          "available": true,
+          "training_positives": 1073,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.9324324324324325,
+            "precision": 0.8961038961038961,
+            "recall": 0.971830985915493,
+            "examples": 7752,
+            "positives": 71
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 81,
+            "threshold": 0.5,
+            "precision": 0.9176470588235294,
+            "recall": 0.9629629629629629,
+            "f1": 0.9397590361445783,
+            "predicted_positives": 85
+          }
+        },
+        "phantom_riches": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "fear_intimidation": {
+          "available": true,
+          "training_positives": 560,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.8631578947368421,
+            "precision": 0.803921568627451,
+            "recall": 0.9318181818181818,
+            "examples": 7752,
+            "positives": 44
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 40,
+            "threshold": 0.5,
+            "precision": 0.7037037037037037,
+            "recall": 0.95,
+            "f1": 0.8085106382978723,
+            "predicted_positives": 54
+          }
+        },
+        "liking": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "urgency_scarcity": {
+          "available": true,
+          "training_positives": 1187,
+          "validation_selection": {
+            "threshold": 0.7413748323917387,
+            "f1": 0.7439613526570048,
+            "precision": 0.6581196581196581,
+            "recall": 0.8555555555555555,
+            "examples": 7752,
+            "positives": 90
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 120,
+            "threshold": 0.7413748323917387,
+            "precision": 0.668918918918919,
+            "recall": 0.825,
+            "f1": 0.7388059701492538,
+            "predicted_positives": 148
+          }
+        },
+        "pretext_trust": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "reciprocity": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "consistency_commitment": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "social_proof": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "accusation": {
+          "available": true,
+          "training_positives": 288,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.5945945945945946,
+            "precision": 0.44,
+            "recall": 0.9166666666666666,
+            "examples": 7752,
+            "positives": 12
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 13,
+            "threshold": 0.5,
+            "precision": 0.3548387096774194,
+            "recall": 0.8461538461538461,
+            "f1": 0.5,
+            "predicted_positives": 31
+          }
+        },
+        "secrecy_instruction": {
+          "available": true,
+          "training_positives": 86,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.36363636363636365,
+            "precision": 0.5,
+            "recall": 0.2857142857142857,
+            "examples": 7752,
+            "positives": 14
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 17,
+            "threshold": 0.5,
+            "precision": 0.25806451612903225,
+            "recall": 0.47058823529411764,
+            "f1": 0.3333333333333333,
+            "predicted_positives": 31
+          }
+        },
+        "isolation_instruction": {
+          "available": true,
+          "training_positives": 273,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.5714285714285714,
+            "precision": 0.5,
+            "recall": 0.6666666666666666,
+            "examples": 7752,
+            "positives": 21
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 21,
+            "threshold": 0.5,
+            "precision": 0.4,
+            "recall": 0.5714285714285714,
+            "f1": 0.47058823529411764,
+            "predicted_positives": 30
+          }
+        },
+        "surveillance_control": {
+          "available": true,
+          "training_positives": 233,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.6470588235294118,
+            "precision": 0.5238095238095238,
+            "recall": 0.8461538461538461,
+            "examples": 7752,
+            "positives": 13
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 18,
+            "threshold": 0.5,
+            "precision": 0.5483870967741935,
+            "recall": 0.9444444444444444,
+            "f1": 0.6938775510204082,
+            "predicted_positives": 31
+          }
+        },
+        "financial_demand": {
+          "available": true,
+          "training_positives": 1763,
+          "validation_selection": {
+            "threshold": 0.7430351504683385,
+            "f1": 0.8468468468468469,
+            "precision": 0.8034188034188035,
+            "recall": 0.8952380952380953,
+            "examples": 7752,
+            "positives": 105
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 154,
+            "threshold": 0.7430351504683385,
+            "precision": 0.8343558282208589,
+            "recall": 0.8831168831168831,
+            "f1": 0.8580441640378549,
+            "predicted_positives": 163
+          }
+        },
+        "credential_request": {
+          "available": true,
+          "training_positives": 1800,
+          "validation_selection": {
+            "threshold": 0.9405552917718861,
+            "f1": 0.8603351955307262,
+            "precision": 0.9871794871794872,
+            "recall": 0.7623762376237624,
+            "examples": 7752,
+            "positives": 101
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 143,
+            "threshold": 0.9405552917718861,
+            "precision": 0.9916666666666667,
+            "recall": 0.8321678321678322,
+            "f1": 0.9049429657794676,
+            "predicted_positives": 120
+          }
+        }
+      }
+    },
+    {
+      "seed": 42,
+      "scam_type": {
+        "validation": {
+          "examples": 7819,
+          "macro_f1_all_manifest_classes": 0.9271331414007976,
+          "weighted_f1": 0.9987571377997476,
+          "per_class": {
+            "non_scam": {
+              "precision": 0.9998673915926269,
+              "recall": 1.0,
+              "f1-score": 0.9999336913997745,
+              "support": 7540.0
+            },
+            "digital_arrest": {
+              "precision": 1.0,
+              "recall": 0.9655172413793104,
+              "f1-score": 0.9824561403508771,
+              "support": 87.0
+            },
+            "fake_kyc_bank": {
+              "precision": 0.6,
+              "recall": 0.6666666666666666,
+              "f1-score": 0.631578947368421,
+              "support": 9.0
+            },
+            "courier_customs": {
+              "precision": 0.7142857142857143,
+              "recall": 0.8333333333333334,
+              "f1-score": 0.7692307692307693,
+              "support": 6.0
+            },
+            "otp_account_takeover": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "impersonation_other": {
+              "precision": 1.0,
+              "recall": 0.9787234042553191,
+              "f1-score": 0.989247311827957,
+              "support": 47.0
+            },
+            "tech_support": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 39.0
+            },
+            "loan_job": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 1.0
+            },
+            "other_scam": {
+              "precision": 0.9662921348314607,
+              "recall": 0.9772727272727273,
+              "f1-score": 0.9717514124293786,
+              "support": 88.0
+            }
+          }
+        },
+        "test_supporting_only": {
+          "examples": 7761,
+          "macro_f1_all_manifest_classes": 0.8025564386620118,
+          "weighted_f1": 0.9990373154257745,
+          "per_class": {
+            "non_scam": {
+              "precision": 0.9998656455730216,
+              "recall": 1.0,
+              "f1-score": 0.9999328182734296,
+              "support": 7442.0
+            },
+            "digital_arrest": {
+              "precision": 0.9736842105263158,
+              "recall": 0.9736842105263158,
+              "f1-score": 0.9736842105263158,
+              "support": 76.0
+            },
+            "fake_kyc_bank": {
+              "precision": 0.6,
+              "recall": 0.6,
+              "f1-score": 0.6,
+              "support": 5.0
+            },
+            "courier_customs": {
+              "precision": 1.0,
+              "recall": 0.75,
+              "f1-score": 0.8571428571428571,
+              "support": 4.0
+            },
+            "otp_account_takeover": {
+              "precision": 0.6666666666666666,
+              "recall": 1.0,
+              "f1-score": 0.8,
+              "support": 2.0
+            },
+            "impersonation_other": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 51.0
+            },
+            "tech_support": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 51.0
+            },
+            "loan_job": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0,
+              "support": 1.0
+            },
+            "other_scam": {
+              "precision": 0.9922480620155039,
+              "recall": 0.9922480620155039,
+              "f1-score": 0.9922480620155039,
+              "support": 129.0
+            }
+          }
+        }
+      },
+      "stage": {
+        "validation": {
+          "examples": 7817,
+          "macro_f1_all_manifest_classes": 0.8555578652595238,
+          "weighted_f1": 0.9960610197350153,
+          "per_class": {
+            "none_unknown": {
+              "precision": 0.9998673915926269,
+              "recall": 1.0,
+              "f1-score": 0.9999336913997745,
+              "support": 7540.0
+            },
+            "contact": {
+              "precision": 0.9027777777777778,
+              "recall": 0.7831325301204819,
+              "f1-score": 0.8387096774193549,
+              "support": 83.0
+            },
+            "authority_claim": {
+              "precision": 0.65625,
+              "recall": 1.0,
+              "f1-score": 0.7924528301886793,
+              "support": 21.0
+            },
+            "accusation": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 3.0
+            },
+            "threat": {
+              "precision": 1.0,
+              "recall": 0.8333333333333334,
+              "f1-score": 0.9090909090909091,
+              "support": 6.0
+            },
+            "isolation_control": {
+              "precision": 0.5,
+              "recall": 0.5,
+              "f1-score": 0.5,
+              "support": 8.0
+            },
+            "payment_extraction": {
+              "precision": 0.9487179487179487,
+              "recall": 0.9487179487179487,
+              "f1-score": 0.9487179487179487,
+              "support": 156.0
+            }
+          }
+        },
+        "test_supporting_only": {
+          "examples": 7756,
+          "macro_f1_all_manifest_classes": 0.8334584340433466,
+          "weighted_f1": 0.995364543672607,
+          "per_class": {
+            "none_unknown": {
+              "precision": 0.9998656455730216,
+              "recall": 1.0,
+              "f1-score": 0.9999328182734296,
+              "support": 7442.0
+            },
+            "contact": {
+              "precision": 0.8793103448275862,
+              "recall": 0.7285714285714285,
+              "f1-score": 0.796875,
+              "support": 70.0
+            },
+            "authority_claim": {
+              "precision": 0.7142857142857143,
+              "recall": 0.9523809523809523,
+              "f1-score": 0.8163265306122449,
+              "support": 21.0
+            },
+            "accusation": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "threat": {
+              "precision": 1.0,
+              "recall": 0.8888888888888888,
+              "f1-score": 0.9411764705882353,
+              "support": 9.0
+            },
+            "isolation_control": {
+              "precision": 0.2222222222222222,
+              "recall": 0.6666666666666666,
+              "f1-score": 0.3333333333333333,
+              "support": 9.0
+            },
+            "payment_extraction": {
+              "precision": 0.9789473684210527,
+              "recall": 0.916256157635468,
+              "f1-score": 0.9465648854961832,
+              "support": 203.0
+            }
+          }
+        }
+      },
+      "tactics": {
+        "authority_impersonation": {
+          "available": true,
+          "training_positives": 1073,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.9261744966442953,
+            "precision": 0.8846153846153846,
+            "recall": 0.971830985915493,
+            "examples": 7752,
+            "positives": 71
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 81,
+            "threshold": 0.5,
+            "precision": 0.9176470588235294,
+            "recall": 0.9629629629629629,
+            "f1": 0.9397590361445783,
+            "predicted_positives": 85
+          }
+        },
+        "phantom_riches": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "fear_intimidation": {
+          "available": true,
+          "training_positives": 560,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.8631578947368421,
+            "precision": 0.803921568627451,
+            "recall": 0.9318181818181818,
+            "examples": 7752,
+            "positives": 44
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 40,
+            "threshold": 0.5,
+            "precision": 0.6909090909090909,
+            "recall": 0.95,
+            "f1": 0.8,
+            "predicted_positives": 55
+          }
+        },
+        "liking": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "urgency_scarcity": {
+          "available": true,
+          "training_positives": 1187,
+          "validation_selection": {
+            "threshold": 0.7343569368124006,
+            "f1": 0.7246376811594203,
+            "precision": 0.6410256410256411,
+            "recall": 0.8333333333333334,
+            "examples": 7752,
+            "positives": 90
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 120,
+            "threshold": 0.7343569368124006,
+            "precision": 0.6644295302013423,
+            "recall": 0.825,
+            "f1": 0.7360594795539034,
+            "predicted_positives": 149
+          }
+        },
+        "pretext_trust": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "reciprocity": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "consistency_commitment": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "social_proof": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "accusation": {
+          "available": true,
+          "training_positives": 288,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.5789473684210527,
+            "precision": 0.4230769230769231,
+            "recall": 0.9166666666666666,
+            "examples": 7752,
+            "positives": 12
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 13,
+            "threshold": 0.5,
+            "precision": 0.3548387096774194,
+            "recall": 0.8461538461538461,
+            "f1": 0.5,
+            "predicted_positives": 31
+          }
+        },
+        "secrecy_instruction": {
+          "available": true,
+          "training_positives": 86,
+          "validation_selection": {
+            "threshold": 0.1376886112987994,
+            "f1": 0.33962264150943394,
+            "precision": 0.23076923076923078,
+            "recall": 0.6428571428571429,
+            "examples": 7752,
+            "positives": 14
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 17,
+            "threshold": 0.1376886112987994,
+            "precision": 0.2153846153846154,
+            "recall": 0.8235294117647058,
+            "f1": 0.34146341463414637,
+            "predicted_positives": 65
+          }
+        },
+        "isolation_instruction": {
+          "available": true,
+          "training_positives": 273,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.56,
+            "precision": 0.4827586206896552,
+            "recall": 0.6666666666666666,
+            "examples": 7752,
+            "positives": 21
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 21,
+            "threshold": 0.5,
+            "precision": 0.40625,
+            "recall": 0.6190476190476191,
+            "f1": 0.49056603773584906,
+            "predicted_positives": 32
+          }
+        },
+        "surveillance_control": {
+          "available": true,
+          "training_positives": 233,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.6285714285714286,
+            "precision": 0.5,
+            "recall": 0.8461538461538461,
+            "examples": 7752,
+            "positives": 13
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 18,
+            "threshold": 0.5,
+            "precision": 0.5625,
+            "recall": 1.0,
+            "f1": 0.72,
+            "predicted_positives": 32
+          }
+        },
+        "financial_demand": {
+          "available": true,
+          "training_positives": 1763,
+          "validation_selection": {
+            "threshold": 0.7632564663886947,
+            "f1": 0.8378378378378378,
+            "precision": 0.7948717948717948,
+            "recall": 0.8857142857142857,
+            "examples": 7752,
+            "positives": 105
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 154,
+            "threshold": 0.7632564663886947,
+            "precision": 0.8354430379746836,
+            "recall": 0.8571428571428571,
+            "f1": 0.8461538461538461,
+            "predicted_positives": 158
+          }
+        },
+        "credential_request": {
+          "available": true,
+          "training_positives": 1800,
+          "validation_selection": {
+            "threshold": 0.5566313484311044,
+            "f1": 0.8532110091743119,
+            "precision": 0.7948717948717948,
+            "recall": 0.9207920792079208,
+            "examples": 7752,
+            "positives": 101
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 143,
+            "threshold": 0.5566313484311044,
+            "precision": 0.8598726114649682,
+            "recall": 0.9440559440559441,
+            "f1": 0.9,
+            "predicted_positives": 157
+          }
+        }
+      }
+    },
+    {
+      "seed": 93,
+      "scam_type": {
+        "validation": {
+          "examples": 7819,
+          "macro_f1_all_manifest_classes": 0.8160146636444477,
+          "weighted_f1": 0.9985653101304942,
+          "per_class": {
+            "non_scam": {
+              "precision": 0.9997348183505701,
+              "recall": 1.0,
+              "f1-score": 0.9998673915926269,
+              "support": 7540.0
+            },
+            "digital_arrest": {
+              "precision": 1.0,
+              "recall": 0.9655172413793104,
+              "f1-score": 0.9824561403508771,
+              "support": 87.0
+            },
+            "fake_kyc_bank": {
+              "precision": 0.6,
+              "recall": 0.6666666666666666,
+              "f1-score": 0.631578947368421,
+              "support": 9.0
+            },
+            "courier_customs": {
+              "precision": 0.7142857142857143,
+              "recall": 0.8333333333333334,
+              "f1-score": 0.7692307692307693,
+              "support": 6.0
+            },
+            "otp_account_takeover": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "impersonation_other": {
+              "precision": 1.0,
+              "recall": 0.9787234042553191,
+              "f1-score": 0.989247311827957,
+              "support": 47.0
+            },
+            "tech_support": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 39.0
+            },
+            "loan_job": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0,
+              "support": 1.0
+            },
+            "other_scam": {
+              "precision": 0.9662921348314607,
+              "recall": 0.9772727272727273,
+              "f1-score": 0.9717514124293786,
+              "support": 88.0
+            }
+          }
+        },
+        "test_supporting_only": {
+          "examples": 7761,
+          "macro_f1_all_manifest_classes": 0.8025564386620118,
+          "weighted_f1": 0.9990373154257745,
+          "per_class": {
+            "non_scam": {
+              "precision": 0.9998656455730216,
+              "recall": 1.0,
+              "f1-score": 0.9999328182734296,
+              "support": 7442.0
+            },
+            "digital_arrest": {
+              "precision": 0.9736842105263158,
+              "recall": 0.9736842105263158,
+              "f1-score": 0.9736842105263158,
+              "support": 76.0
+            },
+            "fake_kyc_bank": {
+              "precision": 0.6,
+              "recall": 0.6,
+              "f1-score": 0.6,
+              "support": 5.0
+            },
+            "courier_customs": {
+              "precision": 1.0,
+              "recall": 0.75,
+              "f1-score": 0.8571428571428571,
+              "support": 4.0
+            },
+            "otp_account_takeover": {
+              "precision": 0.6666666666666666,
+              "recall": 1.0,
+              "f1-score": 0.8,
+              "support": 2.0
+            },
+            "impersonation_other": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 51.0
+            },
+            "tech_support": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 51.0
+            },
+            "loan_job": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1-score": 0.0,
+              "support": 1.0
+            },
+            "other_scam": {
+              "precision": 0.9922480620155039,
+              "recall": 0.9922480620155039,
+              "f1-score": 0.9922480620155039,
+              "support": 129.0
+            }
+          }
+        }
+      },
+      "stage": {
+        "validation": {
+          "examples": 7817,
+          "macro_f1_all_manifest_classes": 0.8332093623342166,
+          "weighted_f1": 0.9956637786304586,
+          "per_class": {
+            "none_unknown": {
+              "precision": 0.9997348183505701,
+              "recall": 1.0,
+              "f1-score": 0.9998673915926269,
+              "support": 7540.0
+            },
+            "contact": {
+              "precision": 0.9142857142857143,
+              "recall": 0.7710843373493976,
+              "f1-score": 0.8366013071895425,
+              "support": 83.0
+            },
+            "authority_claim": {
+              "precision": 0.6451612903225806,
+              "recall": 0.9523809523809523,
+              "f1-score": 0.7692307692307693,
+              "support": 21.0
+            },
+            "accusation": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 3.0
+            },
+            "threat": {
+              "precision": 1.0,
+              "recall": 0.8333333333333334,
+              "f1-score": 0.9090909090909091,
+              "support": 6.0
+            },
+            "isolation_control": {
+              "precision": 0.375,
+              "recall": 0.375,
+              "f1-score": 0.375,
+              "support": 8.0
+            },
+            "payment_extraction": {
+              "precision": 0.9367088607594937,
+              "recall": 0.9487179487179487,
+              "f1-score": 0.9426751592356688,
+              "support": 156.0
+            }
+          }
+        },
+        "test_supporting_only": {
+          "examples": 7756,
+          "macro_f1_all_manifest_classes": 0.8416418422638767,
+          "weighted_f1": 0.9953785688052144,
+          "per_class": {
+            "none_unknown": {
+              "precision": 0.9997313272434175,
+              "recall": 1.0,
+              "f1-score": 0.9998656455730216,
+              "support": 7442.0
+            },
+            "contact": {
+              "precision": 0.864406779661017,
+              "recall": 0.7285714285714285,
+              "f1-score": 0.7906976744186046,
+              "support": 70.0
+            },
+            "authority_claim": {
+              "precision": 0.7692307692307693,
+              "recall": 0.9523809523809523,
+              "f1-score": 0.851063829787234,
+              "support": 21.0
+            },
+            "accusation": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "threat": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 9.0
+            },
+            "isolation_control": {
+              "precision": 0.20833333333333334,
+              "recall": 0.5555555555555556,
+              "f1-score": 0.30303030303030304,
+              "support": 9.0
+            },
+            "payment_extraction": {
+              "precision": 0.9739583333333334,
+              "recall": 0.9211822660098522,
+              "f1-score": 0.9468354430379747,
+              "support": 203.0
+            }
+          }
+        }
+      },
+      "tactics": {
+        "authority_impersonation": {
+          "available": true,
+          "training_positives": 1073,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.9324324324324325,
+            "precision": 0.8961038961038961,
+            "recall": 0.971830985915493,
+            "examples": 7752,
+            "positives": 71
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 81,
+            "threshold": 0.5,
+            "precision": 0.9176470588235294,
+            "recall": 0.9629629629629629,
+            "f1": 0.9397590361445783,
+            "predicted_positives": 85
+          }
+        },
+        "phantom_riches": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "fear_intimidation": {
+          "available": true,
+          "training_positives": 560,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.8631578947368421,
+            "precision": 0.803921568627451,
+            "recall": 0.9318181818181818,
+            "examples": 7752,
+            "positives": 44
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 40,
+            "threshold": 0.5,
+            "precision": 0.7037037037037037,
+            "recall": 0.95,
+            "f1": 0.8085106382978723,
+            "predicted_positives": 54
+          }
+        },
+        "liking": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "urgency_scarcity": {
+          "available": true,
+          "training_positives": 1187,
+          "validation_selection": {
+            "threshold": 0.7107622742652886,
+            "f1": 0.7246376811594203,
+            "precision": 0.6410256410256411,
+            "recall": 0.8333333333333334,
+            "examples": 7752,
+            "positives": 90
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 120,
+            "threshold": 0.7107622742652886,
+            "precision": 0.6474358974358975,
+            "recall": 0.8416666666666667,
+            "f1": 0.7318840579710145,
+            "predicted_positives": 156
+          }
+        },
+        "pretext_trust": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "reciprocity": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "consistency_commitment": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "social_proof": {
+          "available": false,
+          "reason": "insufficient_positive_training_supervision",
+          "training_positives": 0
+        },
+        "accusation": {
+          "available": true,
+          "training_positives": 288,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.6111111111111112,
+            "precision": 0.4583333333333333,
+            "recall": 0.9166666666666666,
+            "examples": 7752,
+            "positives": 12
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 13,
+            "threshold": 0.5,
+            "precision": 0.34375,
+            "recall": 0.8461538461538461,
+            "f1": 0.4888888888888889,
+            "predicted_positives": 32
+          }
+        },
+        "secrecy_instruction": {
+          "available": true,
+          "training_positives": 86,
+          "validation_selection": {
+            "threshold": 0.11263250295072698,
+            "f1": 0.3018867924528302,
+            "precision": 0.20512820512820512,
+            "recall": 0.5714285714285714,
+            "examples": 7752,
+            "positives": 14
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 17,
+            "threshold": 0.11263250295072698,
+            "precision": 0.20588235294117646,
+            "recall": 0.8235294117647058,
+            "f1": 0.32941176470588235,
+            "predicted_positives": 68
+          }
+        },
+        "isolation_instruction": {
+          "available": true,
+          "training_positives": 273,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.5714285714285714,
+            "precision": 0.5,
+            "recall": 0.6666666666666666,
+            "examples": 7752,
+            "positives": 21
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 21,
+            "threshold": 0.5,
+            "precision": 0.41935483870967744,
+            "recall": 0.6190476190476191,
+            "f1": 0.5,
+            "predicted_positives": 31
+          }
+        },
+        "surveillance_control": {
+          "available": true,
+          "training_positives": 233,
+          "validation_selection": {
+            "threshold": 0.5,
+            "f1": 0.6285714285714286,
+            "precision": 0.5,
+            "recall": 0.8461538461538461,
+            "examples": 7752,
+            "positives": 13
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 18,
+            "threshold": 0.5,
+            "precision": 0.5483870967741935,
+            "recall": 0.9444444444444444,
+            "f1": 0.6938775510204082,
+            "predicted_positives": 31
+          }
+        },
+        "financial_demand": {
+          "available": true,
+          "training_positives": 1763,
+          "validation_selection": {
+            "threshold": 0.7594467961788117,
+            "f1": 0.8468468468468469,
+            "precision": 0.8034188034188035,
+            "recall": 0.8952380952380953,
+            "examples": 7752,
+            "positives": 105
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 154,
+            "threshold": 0.7594467961788117,
+            "precision": 0.8525641025641025,
+            "recall": 0.8636363636363636,
+            "f1": 0.8580645161290322,
+            "predicted_positives": 156
+          }
+        },
+        "credential_request": {
+          "available": true,
+          "training_positives": 1800,
+          "validation_selection": {
+            "threshold": 0.9457775497436524,
+            "f1": 0.8603351955307262,
+            "precision": 0.9871794871794872,
+            "recall": 0.7623762376237624,
+            "examples": 7752,
+            "positives": 101
+          },
+          "test_supporting_only": {
+            "examples": 7703,
+            "positives": 143,
+            "threshold": 0.9457775497436524,
+            "precision": 0.9915966386554622,
+            "recall": 0.8251748251748252,
+            "f1": 0.9007633587786259,
+            "predicted_positives": 119
+          }
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "scam_type_validation_macro_f1": {
+      "seeds": 3,
+      "mean": 0.8530541562298977,
+      "standard_deviation": 0.06415428304457003,
+      "minimum": 0.8160146636444477,
+      "maximum": 0.9271331414007976
+    },
+    "stage_validation_macro_f1": {
+      "seeds": 3,
+      "mean": 0.8391046213072294,
+      "standard_deviation": 0.014438392599859226,
+      "minimum": 0.8285466363279477,
+      "maximum": 0.8555578652595238
+    },
+    "supported_tactic_validation_macro_f1": {
+      "seeds": 3,
+      "mean": 0.7065192736191713,
+      "standard_deviation": 0.0064278360529162765,
+      "minimum": 0.701351150894958,
+      "maximum": 0.713716897265866
+    }
+  },
+  "runtime_seconds": 1609.9412780999992,
+  "limitations": [
+    "All current positive supervision is silver and 71% is synthetic.",
+    "Six tactic labels have no positive supervision and are explicitly unavailable.",
+    "Strict unseen-source binary and fusion audits fail the 5% FPR gate.",
+    "This auxiliary artifact never supplies the API scam decision."
+  ],
+  "llm_used_for_detection": false
+}

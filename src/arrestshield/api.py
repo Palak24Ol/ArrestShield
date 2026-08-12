@@ -121,6 +121,11 @@ def create_app(
     def model_info() -> dict[str, Any]:
         result = app.state.engine.model_info()
         result["multitask_auxiliary_loaded"] = app.state.engine.auxiliary_predictor is not None
+        configured_models = app.state.config.get("models", {})
+        result["multitask_backend"] = configured_models.get(
+            "multitask_backend",
+            "custom" if app.state.engine.auxiliary_predictor is not None else "none",
+        )
         return result
 
     @app.post("/v1/detect/text")

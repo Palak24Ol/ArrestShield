@@ -31,7 +31,9 @@ Request:
 
 The response includes the selected trained-ML score, threshold, base score, optional XGBoost fusion score, transparent auxiliary signals, privacy-redacted entities, model status, and a honeypot-boundary block. `is_scam` is a research output while `production_eligible` remains false.
 
-When a complete exported multi-task artifact is available, the service loads its scam-type, tactic, and stage heads as `auxiliary_signals`. Its feasibility binary output is reported but does not replace the API's selected decision source. Before that artifact exists, the same field truthfully identifies its fallback as `deterministic_lexical_rules` and states that those values are not transformer predictions.
+The checked-in service configuration loads the completed `classical` multi-task backend. Its XGBoost scam-type, stage, and supported tactic heads appear under `auxiliary_signals`; they do not replace the API's selected scam decision source. The labels `phantom_riches`, `liking`, `pretext_trust`, `reciprocity`, `consistency_commitment`, and `social_proof` have no positive causal training windows, so they are returned as unavailable with null scores instead of fake always-negative predictions. If an auxiliary artifact is absent, the same field truthfully identifies its fallback as `deterministic_lexical_rules`. An explicitly configured `transformer` backend is also supported for a future completed comparison export.
+
+`GET /v1/model` reports `multitask_backend` and `multitask_auxiliary_loaded`, making it possible to verify which implementation is actually serving a request.
 
 ### `POST /v1/detect/audio`
 

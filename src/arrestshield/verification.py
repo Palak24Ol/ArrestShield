@@ -21,7 +21,8 @@ class VerificationCheck:
 
 
 def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    # utf-8-sig accepts both plain UTF-8 and the BOM emitted by some Windows tools.
+    return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
 def verify_sha256(
@@ -77,8 +78,14 @@ def verify_json_value(
 
 def verify_local_artifacts(
     root: Path,
-    require_transformer: bool = True,
+    require_multitask: bool = True,
+    *,
+    require_transformer: bool | None = None,
 ) -> dict[str, Any]:
+    # Keep the old keyword as a compatibility alias for callers created before the
+    # laptop deployment switched from a transformer export to compact XGBoost heads.
+    if require_transformer is not None:
+        require_multitask = require_transformer
     root = root.resolve()
     checks: list[VerificationCheck] = []
 
@@ -255,7 +262,7 @@ def verify_local_artifacts(
         checks.append(
             VerificationCheck(
                 "multitask-artifact",
-                "failed" if require_transformer else "skipped",
+                "failed" if require_multitask else "skipped",
                 "artifacts/models/classical_multitask_v1",
                 detail="neither completed classical nor transformer multi-task artifact/report is available",
             )
@@ -300,7 +307,7 @@ def verify_local_artifacts(
     return {
         "schema_version": "1.0.0",
         "root": str(root),
-        "require_transformer": require_transformer,
+        "require_multitask": require_multitask,
         "status": "passed" if not failed else "failed",
         "counts": {
             "checks": len(serialized),

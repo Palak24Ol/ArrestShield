@@ -13,7 +13,8 @@ This repository is an implemented research prototype, not a production detector.
 | Canonical dataset | Built and validated: 52,206 conversations, 615,084 turns, zero split-group leakage | `docs/datasets/PROCESSED_DATA_VALIDATION.json` |
 | SGD and SVD-XGBoost ladder | Trained across seeds 17, 42, and 93 | `reports/model_ladder_v1` |
 | Strict source audit | Failed the pre-registered 5% FPR gate: SGD 11.15%, XGBoost 7.02% source-macro FPR | `reports/model_ladder_v1/loso_metrics.json` |
-| Multi-task transformer | Causal-prefix, head-tail, multi-head trainer implemented with exact step resume; CPU feasibility training is local | `configs/model/multitask_transformer.json` |
+| CPU multi-task detector | SGD binary plus XGBoost scam-type, stage, and 9 supported tactic heads; three seeds trained | `reports/classical_multitask_v1` |
+| Optional transformer comparison | Causal-prefix/head-tail trainer and exact resume implemented; full DistilBERT CPU run was stopped as impractical | `docs/MULTITASK_TRANSFORMER.md` |
 | XGBoost risk fusion | Trained across three seeds using out-of-fold base scores; strict source audit fails at 27.71% macro FPR | `reports/risk_fusion_v1` |
 | Whisper ASR | Local multilingual Whisper-tiny works end to end; Hindi/Hinglish backend selection remains gated | `reports/asr_smoke_v1` |
 | Entity extraction | Local deterministic extraction with sensitive-value redaction by default | `src/arrestshield/entities.py` |
@@ -56,10 +57,10 @@ Run commands from the repository root in this order:
 .venv\Scripts\python.exe scripts\evaluate_leave_one_source_out.py
 .venv\Scripts\python.exe scripts\train_risk_fusion.py
 .venv\Scripts\python.exe scripts\evaluate_risk_fusion_loso.py
-.venv\Scripts\python.exe scripts\train_multitask_transformer.py
+.venv\Scripts\python.exe scripts\train_classical_multitask.py
 ```
 
-Transformer training automatically resumes from `artifacts/models/multitask_transformer_v1/training_checkpoint.pt`. The checkpoint contains only trainable tensors, optimizer/scheduler state, exact RNG state, completed seeds, and progress; the pinned frozen backbone is not duplicated. Use `--no-resume` only when an intentional fresh run is required.
+The laptop deployment uses the completed compact classical multi-task artifact. Optional transformer comparison training remains available through `scripts/train_multitask_transformer.py`; it automatically resumes from a trainable-state-only checkpoint, but a GPU is recommended.
 
 ASR backend comparison requires a compliant `data/audio_validation/manifest.jsonl`:
 
@@ -100,3 +101,5 @@ The runtime order is:
 `audio/text -> ASR/formatting -> trained detector -> optional trained XGBoost fusion -> frozen threshold/hysteresis -> policy decision`
 
 Only after an eligible detector and deployment policy approve a handoff may a separate LLM/RAG honeypot engage. See `docs/ARCHITECTURE.md` for the complete training and runtime diagrams.
+
+The requirement-by-requirement evidence and honest completion boundary are recorded in `docs/COMPLETION_AUDIT.md`.
