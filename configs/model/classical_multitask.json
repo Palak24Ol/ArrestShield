@@ -9,7 +9,9 @@
     "feature_union_path": "artifacts/models/model_ladder_v1/feature_union.joblib",
     "svd_path": "artifacts/models/model_ladder_v1/svd.joblib",
     "binary_detector_path": "artifacts/models/model_ladder_v1/selected_detector.joblib",
-    "fit_scope": "training_split_only"
+    "fit_scope": "training_split_only",
+    "transform_batch_size": 256,
+    "minimum_free_disk_gb": 2.0
   },
   "xgboost": {
     "n_estimators": 300,

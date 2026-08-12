@@ -7,6 +7,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 import json
 import logging
+import os
 from pathlib import Path
 import sys
 import time
@@ -57,8 +58,6 @@ def read_json(path: Path) -> dict[str, Any]:
 
 
 def relative_from_artifact(artifact_dir: Path, target: Path) -> str:
-    import os
-
     return os.path.relpath(target.resolve(), artifact_dir.resolve()).replace("\\", "/")
 
 
@@ -101,9 +100,28 @@ def build_model(config: Mapping[str, Any], seed: int, objective: str, classes: i
     return XGBClassifier(**kwargs)
 
 
-def transform_examples(feature_union: Any, svd: Any, examples: Sequence[MultiTaskExample]) -> np.ndarray:
-    sparse = feature_union.transform([item.text for item in examples])
-    return svd.transform(sparse).astype(np.float32)
+def transform_examples(
+    feature_union: Any,
+    svd: Any,
+    examples: Sequence[MultiTaskExample],
+    batch_size: int,
+) -> np.ndarray:
+    """Transform in bounded batches to avoid Windows paging-file expansion."""
+    if batch_size <= 0:
+        raise ValueError("transform_batch_size must be positive")
+    output = np.empty((len(examples), int(svd.n_components)), dtype=np.float32)
+    for start in range(0, len(examples), batch_size):
+        stop = min(len(examples), start + batch_size)
+        sparse = feature_union.transform([item.text for item in examples[start:stop]])
+        output[start:stop] = svd.transform(sparse).astype(np.float32, copy=False)
+        del sparse
+    return output
+
+
+def available_disk_gb(path: Path) -> float:
+    import shutil
+
+    return float(shutil.disk_usage(path.resolve().anchor).free / (1024 ** 3))
 
 
 def multiclass_metrics(
@@ -180,15 +198,33 @@ def main() -> int:
     validation = data["validation"]
     test = data["test"]
     representation = config["shared_representation"]
+    minimum_free_disk_gb = float(representation.get("minimum_free_disk_gb", 2.0))
+    initial_free_disk_gb = available_disk_gb(PROJECT_ROOT)
+    if initial_free_disk_gb < minimum_free_disk_gb:
+        raise RuntimeError(
+            f"Refusing training with only {initial_free_disk_gb:.2f} GB free; "
+            f"requires at least {minimum_free_disk_gb:.2f} GB"
+        )
+    transform_batch_size = int(representation.get("transform_batch_size", 256))
     feature_path = PROJECT_ROOT / representation["feature_union_path"]
     svd_path = PROJECT_ROOT / representation["svd_path"]
     binary_path = PROJECT_ROOT / representation["binary_detector_path"]
     feature_union = joblib.load(feature_path)
     svd = joblib.load(svd_path)
     LOGGER.info("Transforming %s causal train windows with frozen train-only representation", len(train))
-    train_matrix = transform_examples(feature_union, svd, train)
-    validation_matrix = transform_examples(feature_union, svd, validation)
-    test_matrix = transform_examples(feature_union, svd, test)
+    train_matrix = transform_examples(
+        feature_union, svd, train, transform_batch_size
+    )
+    validation_matrix = transform_examples(
+        feature_union, svd, validation, transform_batch_size
+    )
+    test_matrix = transform_examples(feature_union, svd, test, transform_batch_size)
+    post_transform_free_disk_gb = available_disk_gb(PROJECT_ROOT)
+    if post_transform_free_disk_gb < minimum_free_disk_gb:
+        raise RuntimeError(
+            f"Aborting after transform because free disk fell to "
+            f"{post_transform_free_disk_gb:.2f} GB"
+        )
 
     labels = label_config["labels"]
     scam_types = list(labels["scam_types"])
@@ -407,6 +443,9 @@ def main() -> int:
             "test_conversations": len(test),
             "conversation_safe_split": True,
             "representation_fit_scope": "training_split_only",
+            "transform_batch_size": transform_batch_size,
+            "initial_free_disk_gb": initial_free_disk_gb,
+            "post_transform_free_disk_gb": post_transform_free_disk_gb,
             "scam_type_train_counts": class_counts(type_train_labels, scam_types),
             "stage_observed_train_counts": class_counts(stage_train_labels, stages),
             "tactic_positive_train_counts": tactic_support,

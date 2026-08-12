@@ -7,6 +7,7 @@ from arrestshield.classical_multitask import (
     format_classical_multitask_outputs,
     select_f1_threshold,
 )
+from scripts.train_classical_multitask import transform_examples
 
 
 class FakeMulticlassModel:
@@ -14,6 +15,19 @@ class FakeMulticlassModel:
 
     def predict_proba(self, matrix):
         return np.asarray([[0.25, 0.75] for _ in range(len(matrix))])
+
+
+class FakeFeatureUnion:
+    def transform(self, texts):
+        return np.asarray([[len(text)] for text in texts], dtype=np.float32)
+
+
+class FakeSVD:
+    n_components = 2
+
+    def transform(self, matrix):
+        values = np.asarray(matrix)[:, 0]
+        return np.column_stack([values, values * 2])
 
 
 MANIFEST = {
@@ -36,6 +50,13 @@ def test_balanced_weights_are_finite_capped_and_aligned() -> None:
     assert np.isfinite(weights).all()
     assert weights[3] > weights[0]
     assert weights[3] <= 0.75 * 3.0
+
+
+def test_batched_transform_preserves_order_and_shape() -> None:
+    examples = [type("Example", (), {"text": value})() for value in ["a", "abcd", "xy"]]
+    output = transform_examples(FakeFeatureUnion(), FakeSVD(), examples, batch_size=2)
+    assert output.dtype == np.float32
+    assert output.tolist() == [[1.0, 2.0], [4.0, 8.0], [2.0, 4.0]]
 
 
 def test_probability_alignment_preserves_missing_manifest_column() -> None:
