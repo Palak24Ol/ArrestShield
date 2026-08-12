@@ -1,49 +1,102 @@
 # ArrestShield ML
 
-This repository contains the data and implementation pipeline for the trained
-multilingual ArrestShield scam detector. The LLM-powered honeypot is a separate
-post-detection service and is not allowed to decide whether a call is a scam.
+ArrestShield is a multilingual research pipeline for detecting digital-arrest and related phone scams from English, Hindi, and Hinglish conversations. It includes versioned dataset ingestion, conversation-level splitting, classical and transformer detectors, local Whisper transcription, threat-entity extraction, XGBoost risk fusion, evaluation gates, and a local FastAPI inference service.
 
-## Data layout
+The scam decision is made only by trained ML models and frozen policy thresholds. The LLM-powered fake-victim honeypot is a separate downstream system. It is never used to label training data, calculate risk, choose a threshold, or decide whether a conversation is a scam.
 
-- `data/raw/`: immutable source files, grouped by dataset and pinned revision.
-- `data/external/`: gated or manually supplied data; never committed.
-- `data/interim/`: parsed records before unified annotation.
-- `data/processed/`: normalized conversation/turn records.
-- `data/splits/`: conversation-group train/validation/test manifests.
-- `data/manifests/`: provenance, checksums, licenses, and download receipts.
-- `docs/datasets/`: dataset inventory, citations, limitations, and decisions.
+## Current status
 
-Run `python scripts/download_datasets.py --registry data/manifests/dataset_registry.json`
-to fetch the approved seed data. Large, gated, or license-unverified datasets
-are recorded in the registry but are not downloaded automatically.
+This repository is an implemented research prototype, not a production detector.
 
-## Current ML milestone
+| Component | State | Evidence |
+|---|---|---|
+| Canonical dataset | Built and validated: 52,206 conversations, 615,084 turns, zero split-group leakage | `docs/datasets/PROCESSED_DATA_VALIDATION.json` |
+| SGD and SVD-XGBoost ladder | Trained across seeds 17, 42, and 93 | `reports/model_ladder_v1` |
+| Strict source audit | Failed the pre-registered 5% FPR gate: SGD 11.15%, XGBoost 7.02% source-macro FPR | `reports/model_ladder_v1/loso_metrics.json` |
+| Multi-task transformer | Causal-prefix, head-tail, multi-head trainer implemented with exact step resume; CPU feasibility training is local | `configs/model/multitask_transformer.json` |
+| XGBoost risk fusion | Trained across three seeds using out-of-fold base scores; research-only | `reports/risk_fusion_v1` |
+| Whisper ASR | Local multilingual Whisper-tiny works end to end; Hindi/Hinglish backend selection remains gated | `reports/asr_smoke_v1` |
+| Entity extraction | Local deterministic extraction with sensitive-value redaction by default | `src/arrestshield/entities.py` |
+| Inference API | Text/audio routes, research status, redaction, and honeypot boundary implemented | `docs/INFERENCE_API.md` |
+| Human-gold promotion set | Not collected: 0 of 150 required conversations | `data/human_test/COLLECTION_STATUS.json` |
+| Audio validation set | Not collected; no backend is promoted from one English smoke clip | `data/audio_validation/COLLECTION_STATUS.json` |
 
-The first executable model is a multilingual word/character TF-IDF baseline
-with a class-balanced linear classifier. It uses the fixed conversation-group
-train/validation/test manifest, chooses its operating threshold on validation
-only, and measures early detection on incremental conversation prefixes.
+The ordinary mixed-source split produces very high scores, including 98.43% supporting test recall for XGBoost risk fusion at seed 42. Those values are not treated as real-world performance because every current positive label is silver, 71% of positive supervision is synthetic, and source/style shortcuts are measurable. Promotion is blocked until the strict source gates and independently annotated human-gold gate pass.
+
+## Data truth
+
+The canonical build retains 49,950 negative and 2,256 positive conversations after deduplication. All 2,256 positives are source-silver; no positive conversation is human-gold. The negative pool is dominated by Banking77, DailyDialog, and Schema-Guided Dialogue. This imbalance is documented rather than hidden.
+
+Raw, processed, audio, and model files are intentionally excluded from Git. Dataset identities, pinned revisions, licenses, download URLs, checksums, and blocked sources are recorded in `data/manifests/dataset_registry.json`. Gated, unlicensed, oversized, or language-inappropriate corpora are registered but never silently downloaded.
+
+## Install
+
+Python 3.10 is the supported local runtime.
 
 ```powershell
 py -3.10 -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements\dev.txt
-.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
-.venv\Scripts\python.exe scripts\train_baseline.py
+.venv\Scripts\python.exe -m pytest -q
 ```
 
-See `docs/models/BASELINE_TRAINING.md` for the protocol, artifact layout, and
-limitations. Fine-grained scam type, manipulation tactic, and scam stage heads
-will be trained only after enough human-reviewed labels are available.
+FFmpeg/ffprobe must be available on `PATH` for audio transcription.
 
-The pre-registered comparison rule is documented in
-`docs/MODEL_SELECTION_PROTOCOL.md`: maximize recall at a hard-negative false-
-positive rate no greater than 5%, report three-seed mean and standard deviation,
-and use stable scammer turns-to-detection as the first tiebreaker. The hybrid
-PsyScam/digital-arrest label definitions are in `docs/ANNOTATION_CODEBOOK.md`.
+## Rebuild and train
 
-## Important boundary
+Run commands from the repository root in this order:
 
-The detector will be trained and evaluated from versioned ML datasets. An LLM
-may be invoked only after a calibrated risk-policy activation event, for the
-adaptive fake-victim honeypot conversation.
+```powershell
+.venv\Scripts\python.exe scripts\download_datasets.py
+.venv\Scripts\python.exe scripts\profile_raw_datasets.py
+.venv\Scripts\python.exe scripts\build_canonical_dataset.py
+.venv\Scripts\python.exe scripts\validate_processed_data.py
+.venv\Scripts\python.exe scripts\build_evaluation_views.py
+
+.venv\Scripts\python.exe scripts\train_model_ladder.py
+.venv\Scripts\python.exe scripts\evaluate_leave_one_source_out.py
+.venv\Scripts\python.exe scripts\train_risk_fusion.py
+.venv\Scripts\python.exe scripts\evaluate_risk_fusion_loso.py
+.venv\Scripts\python.exe scripts\train_multitask_transformer.py
+```
+
+Transformer training automatically resumes from `artifacts/models/multitask_transformer_v1/training_checkpoint.pt`. The checkpoint contains only trainable tensors, optimizer/scheduler state, exact RNG state, completed seeds, and progress; the pinned frozen backbone is not duplicated. Use `--no-resume` only when an intentional fresh run is required.
+
+ASR backend comparison requires a compliant `data/audio_validation/manifest.jsonl`:
+
+```powershell
+.venv\Scripts\python.exe scripts\evaluate_asr.py
+```
+
+The independent human set can be frozen only after consent, redaction, two annotations, adjudication, evidence spans, quotas, and leakage checks pass:
+
+```powershell
+.venv\Scripts\python.exe scripts\freeze_human_test_set.py
+```
+
+## Local inference API
+
+```powershell
+.venv\Scripts\python.exe scripts\run_api.py
+```
+
+The service binds to `127.0.0.1:8000`; OpenAPI documentation is at `http://127.0.0.1:8000/docs`. The checked-in policy is `research_only_not_promoted`, permits use of the research fusion artifact for local experiments, and disables honeypot handoff. Sensitive entities are redacted unless a trusted caller explicitly opts in.
+
+The container definition in `deploy/Dockerfile` runs as a non-root user, uses offline model loading, and expects model artifacts to be mounted read-only. It is not intended for direct Internet exposure.
+
+## Repository map
+
+- `configs/`: data schemas, model hyperparameters, evaluation protocols, and deployment policy.
+- `data/manifests/`: pinned source registry; large data folders are local and ignored.
+- `docs/`: annotation, architecture, dataset, evaluation, API, and collection documentation.
+- `reports/`: compact metrics, limitations, run metadata, and artifact hashes.
+- `scripts/`: reproducible data, training, evaluation, freeze, and service entrypoints.
+- `src/arrestshield/`: reusable data, model, ASR, entity, fusion, inference, and API code.
+- `tests/`: deterministic unit/contract tests; model-quality claims require the separate evaluation reports.
+
+## Decision boundary
+
+The runtime order is:
+
+`audio/text -> ASR/formatting -> trained detector -> optional trained XGBoost fusion -> frozen threshold/hysteresis -> policy decision`
+
+Only after an eligible detector and deployment policy approve a handoff may a separate LLM/RAG honeypot engage. See `docs/ARCHITECTURE.md` for the complete training and runtime diagrams.

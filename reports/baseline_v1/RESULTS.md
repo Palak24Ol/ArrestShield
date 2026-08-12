@@ -1,6 +1,6 @@
 # ArrestShield Binary Baseline Results
 
-## Accepted run
+## Reproducible engineering run (research only)
 
 - Code revision: `d7fe85917a467743451e706e51e247c26a68c2ec`
 - Model: `arrestshield-tfidf-sgd-v1`
@@ -9,9 +9,10 @@
 - Operating threshold: `0.535`
 - Train / validation / test conversations: 36,626 / 7,819 / 7,761
 
-The threshold was selected on validation data only. The reported final metrics
-use the untouched test split whose conversations and similarity groups do not
-appear in training or validation.
+The threshold was selected on validation data only. The reported test split has
+no conversation/similarity-group overlap with training or validation, but it is
+not an independently sourced human-gold test and must not be treated as a
+production benchmark.
 
 ## Test results
 
