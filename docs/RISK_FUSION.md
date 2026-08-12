@@ -18,6 +18,8 @@ The XGBoost training rows never receive in-sample predictions from the base dete
 
 The fusion threshold is selected on the validation hard-negative view at false-positive rate at most 5%. Promotion additionally requires validation recall not below the frozen base detector and a frozen human-gold test set. Because the human set is not collected, `risk_fusion_v1` must remain `research_only_not_promoted` regardless of apparent corpus metrics.
 
+The mixed-source score is followed by `scripts/evaluate_risk_fusion_loso.py`. For every mixed-label source, this audit excludes that source before refitting each TF-IDF fold, base detector, OOF score, and XGBoost model. A mean FPR below 5% is insufficient: every source/seed run must satisfy the 5% gate.
+
 ## Run
 
 ```powershell

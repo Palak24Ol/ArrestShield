@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "audit_id": "risk-fusion-strict-source-holdout-v1",
+  "model_ladder_config_path": "configs/model/model_ladder.json",
+  "risk_fusion_config_path": "configs/model/risk_fusion.json",
+  "base_family": "sgd",
+  "base_deployment_seed": 42,
+  "oof_folds": 5,
+  "oof_seed": 42,
+  "fusion_seeds": [17, 42, 93],
+  "selection_split": "source_excluded_validation",
+  "held_source_used_for_threshold_selection": false,
+  "gate": {
+    "maximum_fpr_each_held_source": 0.05,
+    "report_source_macro_recall": true,
+    "all_sources_must_pass": true
+  },
+  "llm_used_for_detection": false
+}
