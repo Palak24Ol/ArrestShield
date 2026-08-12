@@ -35,7 +35,9 @@ from arrestshield.multitask import (  # noqa: E402
     load_multitask_examples,
     prefix_example,
     set_global_seed,
+    sortish_epoch_order,
     source_balanced_training_sample,
+    trim_padded_batch,
 )
 from arrestshield.protocol import select_threshold_at_fpr, summarize_seed_values  # noqa: E402
 
@@ -145,6 +147,9 @@ def training_signature(
         "gradient_accumulation_steps": int(
             config["training"]["gradient_accumulation_steps"]
         ),
+        "sortish_mega_batch_multiplier": int(
+            config["training"]["sortish_mega_batch_multiplier"]
+        ),
     }
 
 
@@ -156,12 +161,6 @@ def save_step_checkpoint(path: Path, payload: Mapping[str, Any]) -> None:
     temporary = path.with_suffix(path.suffix + ".part")
     torch.save(dict(payload), temporary)
     temporary.replace(path)
-
-
-def deterministic_epoch_order(size: int, seed: int, epoch: int) -> list[int]:
-    """Return a reproducible order so mid-epoch resume needs only a batch offset."""
-    generator = np.random.default_rng(int(seed) * 1_000_003 + int(epoch))
-    return generator.permutation(size).tolist()
 
 
 def capture_rng_state() -> dict[str, Any]:
@@ -506,7 +505,12 @@ def main() -> int:
             ],
             weight_decay=float(training_config["weight_decay"]),
         )
-        validation_loader = DataLoader(validation_dataset, batch_size=evaluation_batch_size, shuffle=False)
+        validation_loader = DataLoader(
+            validation_dataset,
+            batch_size=evaluation_batch_size,
+            shuffle=False,
+            collate_fn=trim_padded_batch,
+        )
         scheduler = get_linear_schedule_with_warmup(optimizer, warmup_steps, total_steps)
         best_key: tuple[float, float, float] | None = None
         best_state: dict[str, Any] | None = None
@@ -545,7 +549,13 @@ def main() -> int:
             optimizer.zero_grad(set_to_none=True)
             if epoch != start_epoch or resume_batch == 0:
                 running_loss = 0.0
-            order = deterministic_epoch_order(len(train_dataset), seed, epoch)
+            order = sortish_epoch_order(
+                train_dataset.token_lengths,
+                batch_size,
+                seed,
+                epoch,
+                int(training_config["sortish_mega_batch_multiplier"]),
+            )
             first_example = min(len(order), resume_batch * batch_size)
             remaining = Subset(train_dataset, order[first_example:])
             loader_generator = torch.Generator().manual_seed(
@@ -557,6 +567,7 @@ def main() -> int:
                 shuffle=False,
                 num_workers=int(training_config["num_workers"]),
                 generator=loader_generator,
+                collate_fn=trim_padded_batch,
             )
             for local_step, raw_batch in enumerate(train_loader, start=1):
                 step = resume_batch + local_step
@@ -726,8 +737,18 @@ def main() -> int:
     model.tactic_head.load_state_dict(heads["tactic_head"])
     model.stage_head.load_state_dict(heads["stage_head"])
     model.to(device)
-    validation_loader = DataLoader(validation_dataset, batch_size=evaluation_batch_size, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=evaluation_batch_size, shuffle=False)
+    validation_loader = DataLoader(
+        validation_dataset,
+        batch_size=evaluation_batch_size,
+        shuffle=False,
+        collate_fn=trim_padded_batch,
+    )
+    test_loader = DataLoader(
+        test_dataset,
+        batch_size=evaluation_batch_size,
+        shuffle=False,
+        collate_fn=trim_padded_batch,
+    )
     validation_predictions = predict(model, validation_loader, device)
     test_predictions = predict(model, test_loader, device)
     threshold = float(deployment_manifest["threshold"])
@@ -741,7 +762,12 @@ def main() -> int:
         float(data_config["unknown_tactic_negative_weight"]),
     )
     prefix_dataset = DatasetClass(prefix_test, tokenizer, max_length, head_ratio)
-    prefix_loader = DataLoader(prefix_dataset, batch_size=evaluation_batch_size, shuffle=False)
+    prefix_loader = DataLoader(
+        prefix_dataset,
+        batch_size=evaluation_batch_size,
+        shuffle=False,
+        collate_fn=trim_padded_batch,
+    )
     prefix_predictions = predict(model, prefix_loader, device) if prefix_test else {"binary": np.asarray([])}
     latency = stable_latency_from_flat_scores(
         positive_test, prefix_owners, prefix_predictions["binary"], threshold, exit_threshold
@@ -768,6 +794,10 @@ def main() -> int:
             "unknown_tactic_negative_weight": float(data_config["unknown_tactic_negative_weight"]),
             "causal_prefix_labels": True,
             "context_encoding": config["model"]["context_encoding"],
+            "dynamic_padding_trim": True,
+            "sortish_mega_batch_multiplier": int(
+                training_config["sortish_mega_batch_multiplier"]
+            ),
         },
         "seed_runs": seed_runs,
         "validation_primary": binary_metrics(

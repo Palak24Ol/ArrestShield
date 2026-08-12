@@ -11,13 +11,13 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from train_multitask_transformer import (  # noqa: E402
     capture_rng_state,
-    deterministic_epoch_order,
     load_trainable_state_dict,
     restore_rng_state,
     save_step_checkpoint,
     trainable_state_dict,
     training_signature,
 )
+from arrestshield.multitask import sortish_epoch_order, trim_padded_batch  # noqa: E402
 
 
 def test_trainable_checkpoint_excludes_frozen_parameters_and_restores() -> None:
@@ -49,11 +49,14 @@ def test_rng_restore_reproduces_python_numpy_and_torch_streams() -> None:
 
 
 def test_epoch_order_and_atomic_checkpoint_are_deterministic(tmp_path: Path) -> None:
-    first = deterministic_epoch_order(20, seed=42, epoch=2)
-    second = deterministic_epoch_order(20, seed=42, epoch=2)
+    lengths = list(range(1, 21))
+    first = sortish_epoch_order(lengths, batch_size=4, seed=42, epoch=2, mega_batch_multiplier=2)
+    second = sortish_epoch_order(lengths, batch_size=4, seed=42, epoch=2, mega_batch_multiplier=2)
     assert first == second
     assert sorted(first) == list(range(20))
-    assert first != deterministic_epoch_order(20, seed=42, epoch=3)
+    assert first != sortish_epoch_order(
+        lengths, batch_size=4, seed=42, epoch=3, mega_batch_multiplier=2
+    )
 
     path = tmp_path / "checkpoint.pt"
     save_step_checkpoint(path, {"value": torch.tensor([1, 2, 3])})
@@ -61,11 +64,34 @@ def test_epoch_order_and_atomic_checkpoint_are_deterministic(tmp_path: Path) -> 
     assert not path.with_suffix(".pt.part").exists()
 
 
+def test_trim_padded_batch_keeps_labels_and_removes_shared_padding() -> None:
+    rows = [
+        {
+            "input_ids": torch.tensor([101, 5, 102, 0, 0]),
+            "attention_mask": torch.tensor([1, 1, 1, 0, 0]),
+            "binary_labels": torch.tensor(1.0),
+        },
+        {
+            "input_ids": torch.tensor([101, 7, 8, 102, 0]),
+            "attention_mask": torch.tensor([1, 1, 1, 1, 0]),
+            "binary_labels": torch.tensor(0.0),
+        },
+    ]
+    batch = trim_padded_batch(rows)
+    assert batch["input_ids"].shape == (2, 4)
+    assert batch["attention_mask"].shape == (2, 4)
+    assert batch["binary_labels"].tolist() == [1.0, 0.0]
+
+
 def test_training_signature_changes_when_training_contract_changes() -> None:
     config = {
         "run_id": "fixture",
         "model": {"max_length": 256},
-        "training": {"batch_size": 16, "gradient_accumulation_steps": 2},
+        "training": {
+            "batch_size": 16,
+            "gradient_accumulation_steps": 2,
+            "sortish_mega_batch_multiplier": 20,
+        },
     }
     first = training_signature(config, "backbone", 100, 20, [17, 42], 3)
     changed = {**config, "model": {"max_length": 128}}

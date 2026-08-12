@@ -442,6 +442,49 @@ def set_global_seed(seed: int, deterministic_algorithms: bool = True) -> None:
         return
 
 
+def sortish_epoch_order(
+    token_lengths: Sequence[int],
+    batch_size: int,
+    seed: int,
+    epoch: int,
+    mega_batch_multiplier: int = 20,
+) -> list[int]:
+    """Shuffle examples, then make locally length-similar batches deterministically."""
+    if batch_size <= 0 or mega_batch_multiplier <= 0:
+        raise ValueError("batch_size and mega_batch_multiplier must be positive")
+    lengths = [int(value) for value in token_lengths]
+    generator = np.random.default_rng(int(seed) * 1_000_003 + int(epoch))
+    shuffled = generator.permutation(len(lengths)).tolist()
+    mega_size = int(batch_size) * int(mega_batch_multiplier)
+    batches: list[list[int]] = []
+    for start in range(0, len(shuffled), mega_size):
+        pool = shuffled[start : start + mega_size]
+        pool.sort(key=lambda index: (-lengths[index], index))
+        batches.extend(
+            pool[offset : offset + batch_size]
+            for offset in range(0, len(pool), batch_size)
+        )
+    generator.shuffle(batches)
+    return [index for batch in batches for index in batch]
+
+
+def trim_padded_batch(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Default-collate a batch and remove columns that are padding for every row."""
+    import torch
+    from torch.utils.data import default_collate
+
+    batch = default_collate(rows)
+    attention = batch.get("attention_mask")
+    if attention is None or not torch.is_tensor(attention) or attention.ndim != 2:
+        return batch
+    maximum = max(1, int(attention.sum(dim=1).max().item()))
+    for name in ("input_ids", "attention_mask", "token_type_ids"):
+        value = batch.get(name)
+        if torch.is_tensor(value) and value.ndim == 2:
+            batch[name] = value[:, :maximum]
+    return batch
+
+
 def configure_backbone_trainability(
     backbone: Any,
     train_last_n_layers: int,
@@ -516,6 +559,10 @@ def build_torch_components() -> tuple[type[Any], type[Any]]:
                 "input_ids": torch.tensor([row[0] for row in encoded_rows], dtype=torch.long),
                 "attention_mask": torch.tensor([row[1] for row in encoded_rows], dtype=torch.long),
             }
+
+        @property
+        def token_lengths(self) -> list[int]:
+            return [int(value) for value in self.encodings["attention_mask"].sum(dim=1)]
 
         def __len__(self) -> int:
             return len(self.examples)
