@@ -100,6 +100,8 @@
     "early_stopping_patience": 1,
     "num_workers": 0,
     "torch_threads": 4,
+    "progress_log_every_optimizer_steps": 5,
+    "checkpoint_every_optimizer_steps": 10,
     "freeze_embeddings": true,
     "train_last_n_backbone_layers": 1,
     "deterministic_algorithms": true

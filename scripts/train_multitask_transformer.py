@@ -1,4 +1,4 @@
-"""Train the IndicBERT multi-task detector under the pre-registered protocol."""
+"""Train the multilingual multi-task detector under the pre-registered protocol."""
 
 from __future__ import annotations
 
@@ -6,10 +6,12 @@ import argparse
 from copy import deepcopy
 from dataclasses import asdict
 from datetime import datetime, timezone
+import hashlib
 import json
 import logging
 import math
 from pathlib import Path
+import random
 import shutil
 import sys
 import time
@@ -56,6 +58,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-validation", type=int, default=None)
     parser.add_argument("--max-test", type=int, default=None)
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument(
+        "--no-resume",
+        action="store_true",
+        help="Ignore any local step checkpoint and start the configured run again.",
+    )
     return parser.parse_args()
 
 
@@ -93,6 +100,91 @@ def subset(values: Sequence[Any] | np.ndarray, indices: Sequence[int]) -> list[A
 
 def move_batch(batch: Mapping[str, Any], device: Any) -> dict[str, Any]:
     return {key: value.to(device) for key, value in batch.items() if key != "row_index"}
+
+
+def trainable_state_dict(model: Any) -> dict[str, Any]:
+    """Copy only trainable tensors; frozen backbone weights come from the pinned checkpoint."""
+    trainable_names = {
+        name for name, parameter in model.named_parameters() if parameter.requires_grad
+    }
+    return {
+        name: tensor.detach().cpu().clone()
+        for name, tensor in model.state_dict().items()
+        if name in trainable_names
+    }
+
+
+def load_trainable_state_dict(model: Any, state: Mapping[str, Any]) -> None:
+    """Restore a partial trainable-only state and reject unknown tensor names."""
+    result = model.load_state_dict(dict(state), strict=False)
+    if result.unexpected_keys:
+        raise ValueError(f"Unexpected checkpoint keys: {result.unexpected_keys}")
+
+
+def training_signature(
+    config: Mapping[str, Any],
+    backbone: str,
+    training_examples: int,
+    validation_examples: int,
+    seeds: Sequence[int],
+    epochs: int,
+) -> dict[str, Any]:
+    """Fields that must match before a step checkpoint can be resumed."""
+    return {
+        "run_id": config["run_id"],
+        "config_sha256": hashlib.sha256(
+            json.dumps(config, sort_keys=True, ensure_ascii=False).encode("utf-8")
+        ).hexdigest(),
+        "backbone": str(backbone),
+        "training_examples": int(training_examples),
+        "validation_examples": int(validation_examples),
+        "seeds": [int(seed) for seed in seeds],
+        "epochs": int(epochs),
+        "max_length": int(config["model"]["max_length"]),
+        "batch_size": int(config["training"]["batch_size"]),
+        "gradient_accumulation_steps": int(
+            config["training"]["gradient_accumulation_steps"]
+        ),
+    }
+
+
+def save_step_checkpoint(path: Path, payload: Mapping[str, Any]) -> None:
+    """Atomically replace the local resumable training checkpoint."""
+    import torch
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".part")
+    torch.save(dict(payload), temporary)
+    temporary.replace(path)
+
+
+def deterministic_epoch_order(size: int, seed: int, epoch: int) -> list[int]:
+    """Return a reproducible order so mid-epoch resume needs only a batch offset."""
+    generator = np.random.default_rng(int(seed) * 1_000_003 + int(epoch))
+    return generator.permutation(size).tolist()
+
+
+def capture_rng_state() -> dict[str, Any]:
+    """Capture stochastic state so a resumed dropout trajectory is reproducible."""
+    import torch
+
+    return {
+        "python": random.getstate(),
+        "numpy": np.random.get_state(),
+        "torch_cpu": torch.get_rng_state(),
+        "torch_cuda": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
+    }
+
+
+def restore_rng_state(state: Mapping[str, Any]) -> None:
+    """Restore the exact state recorded after the last completed optimizer update."""
+    import torch
+
+    random.setstate(state["python"])
+    np.random.set_state(state["numpy"])
+    torch.set_rng_state(state["torch_cpu"])
+    if torch.cuda.is_available() and state.get("torch_cuda") is not None:
+        torch.cuda.set_rng_state_all(state["torch_cuda"])
 
 
 def predict(model: Any, loader: Any, device: Any) -> dict[str, np.ndarray]:
@@ -217,6 +309,7 @@ def export_selected_model(
     manifest = {
         "schema_version": "1.0.0",
         "model_family": "multilingual_distilbert_multitask",
+        "selection_role": config["backbone"]["selection_role"],
         "seed": seed,
         "threshold": threshold,
         "exit_threshold": exit_threshold,
@@ -240,7 +333,7 @@ def export_selected_model(
 def main() -> int:
     import torch
     from torch.optim import AdamW
-    from torch.utils.data import DataLoader
+    from torch.utils.data import DataLoader, Subset
     from transformers import AutoTokenizer, get_linear_schedule_with_warmup
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -316,11 +409,64 @@ def main() -> int:
     accumulation = int(training_config["gradient_accumulation_steps"])
     maximum_fpr = float(protocol["primary_selection"]["maximum"])
     exit_ratio = float(protocol["hysteresis"]["exit_threshold_ratio"])
-    seed_runs: list[dict[str, Any]] = []
-    deployment_manifest: dict[str, Any] | None = None
     started = time.perf_counter()
+    checkpoint_path = args.artifact_dir / "training_checkpoint.pt"
+    signature = training_signature(
+        config,
+        backbone,
+        len(training_examples),
+        len(validation_examples),
+        seeds,
+        epochs,
+    )
+    if args.no_resume and checkpoint_path.exists():
+        checkpoint_path.unlink()
+    resume_payload: dict[str, Any] | None = None
+    if checkpoint_path.exists():
+        loaded = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+        if loaded.get("signature") != signature:
+            raise ValueError(
+                "Existing transformer checkpoint does not match this run. "
+                "Use --no-resume only if starting over is intentional."
+            )
+        resume_payload = loaded
+        LOGGER.info(
+            "Resuming local checkpoint active_seed=%s epoch=%s next_batch=%s",
+            loaded.get("active_seed"),
+            loaded.get("epoch"),
+            loaded.get("next_batch"),
+        )
+    resumed_from_checkpoint = resume_payload is not None
+    elapsed_before_resume = float(
+        (resume_payload or {}).get("elapsed_training_seconds", 0.0)
+    )
+    recovered_optimizer_steps = int(
+        (resume_payload or {}).get("optimizer_steps", 0)
+        if (resume_payload or {}).get("active_seed") is not None
+        else 0
+    )
+    seed_runs: list[dict[str, Any]] = list((resume_payload or {}).get("seed_runs", []))
+    completed_seeds = {
+        int(seed) for seed in (resume_payload or {}).get("completed_seeds", [])
+    }
+    deployment_manifest: dict[str, Any] | None = (resume_payload or {}).get(
+        "deployment_manifest"
+    )
+    batch_count = math.ceil(len(train_dataset) / batch_size)
+    optimizer_steps_per_epoch = math.ceil(batch_count / accumulation)
+    total_steps = max(1, optimizer_steps_per_epoch * epochs)
+    warmup_steps = int(total_steps * float(training_config["warmup_ratio"]))
+    progress_interval = max(
+        1, int(training_config.get("progress_log_every_optimizer_steps", 5))
+    )
+    checkpoint_interval = max(
+        1, int(training_config.get("checkpoint_every_optimizer_steps", 10))
+    )
 
     for seed in seeds:
+        if seed in completed_seeds:
+            LOGGER.info("Skipping already completed seed %s", seed)
+            continue
         set_global_seed(seed, bool(training_config["deterministic_algorithms"]))
         model = ModelClass(
             backbone,
@@ -360,38 +506,109 @@ def main() -> int:
             ],
             weight_decay=float(training_config["weight_decay"]),
         )
-        generator = torch.Generator().manual_seed(seed)
-        train_loader = DataLoader(
-            train_dataset,
-            batch_size=batch_size,
-            shuffle=True,
-            generator=generator,
-            num_workers=int(training_config["num_workers"]),
-        )
         validation_loader = DataLoader(validation_dataset, batch_size=evaluation_batch_size, shuffle=False)
-        total_steps = max(1, math.ceil(len(train_loader) / accumulation) * epochs)
-        warmup_steps = int(total_steps * float(training_config["warmup_ratio"]))
         scheduler = get_linear_schedule_with_warmup(optimizer, warmup_steps, total_steps)
         best_key: tuple[float, float, float] | None = None
         best_state: dict[str, Any] | None = None
         best_epoch: dict[str, Any] | None = None
         patience = 0
+        start_epoch = 1
+        resume_batch = 0
+        running_loss = 0.0
+        optimizer_steps = 0
 
-        for epoch in range(1, epochs + 1):
+        if resume_payload is not None and int(resume_payload.get("active_seed", -1)) == seed:
+            load_trainable_state_dict(model, resume_payload["trainable_state"])
+            optimizer.load_state_dict(resume_payload["optimizer_state"])
+            scheduler.load_state_dict(resume_payload["scheduler_state"])
+            start_epoch = int(resume_payload["epoch"])
+            resume_batch = int(resume_payload["next_batch"])
+            running_loss = float(resume_payload.get("running_loss", 0.0))
+            optimizer_steps = int(resume_payload.get("optimizer_steps", 0))
+            raw_best_key = resume_payload.get("best_key")
+            best_key = tuple(raw_best_key) if raw_best_key is not None else None
+            best_state = resume_payload.get("best_state")
+            best_epoch = resume_payload.get("best_epoch")
+            patience = int(resume_payload.get("patience", 0))
+            restore_rng_state(resume_payload["rng_state"])
+            LOGGER.info(
+                "Recovered seed=%s optimizer_steps=%s at epoch=%s batch=%s/%s",
+                seed,
+                optimizer_steps,
+                start_epoch,
+                resume_batch,
+                batch_count,
+            )
+
+        for epoch in range(start_epoch, epochs + 1):
             model.train()
             optimizer.zero_grad(set_to_none=True)
-            running_loss = 0.0
-            for step, raw_batch in enumerate(train_loader, start=1):
+            if epoch != start_epoch or resume_batch == 0:
+                running_loss = 0.0
+            order = deterministic_epoch_order(len(train_dataset), seed, epoch)
+            first_example = min(len(order), resume_batch * batch_size)
+            remaining = Subset(train_dataset, order[first_example:])
+            loader_generator = torch.Generator().manual_seed(
+                int(seed) * 1_000_003 + int(epoch)
+            )
+            train_loader = DataLoader(
+                remaining,
+                batch_size=batch_size,
+                shuffle=False,
+                num_workers=int(training_config["num_workers"]),
+                generator=loader_generator,
+            )
+            for local_step, raw_batch in enumerate(train_loader, start=1):
+                step = resume_batch + local_step
                 batch = move_batch(raw_batch, device)
                 output = model(**batch)
                 loss = output["loss"] / accumulation
                 loss.backward()
                 running_loss += float(output["loss"].detach().cpu())
-                if step % accumulation == 0 or step == len(train_loader):
+                if step % accumulation == 0 or step == batch_count:
                     torch.nn.utils.clip_grad_norm_(model.parameters(), float(training_config["gradient_clip_norm"]))
                     optimizer.step()
                     scheduler.step()
                     optimizer.zero_grad(set_to_none=True)
+                    optimizer_steps += 1
+                    if optimizer_steps % progress_interval == 0:
+                        LOGGER.info(
+                            "seed=%s epoch=%s batch=%s/%s optimizer_step=%s partial_loss=%.4f",
+                            seed,
+                            epoch,
+                            step,
+                            batch_count,
+                            optimizer_steps,
+                            running_loss / max(1, step),
+                        )
+                    if optimizer_steps % checkpoint_interval == 0:
+                        save_step_checkpoint(
+                            checkpoint_path,
+                            {
+                                "schema_version": "1.0.0",
+                                "signature": signature,
+                                "elapsed_training_seconds": elapsed_before_resume
+                                + time.perf_counter()
+                                - started,
+                                "active_seed": seed,
+                                "completed_seeds": sorted(completed_seeds),
+                                "seed_runs": seed_runs,
+                                "deployment_manifest": deployment_manifest,
+                                "epoch": epoch,
+                                "next_batch": step,
+                                "optimizer_steps": optimizer_steps,
+                                "running_loss": running_loss,
+                                "trainable_state": trainable_state_dict(model),
+                                "optimizer_state": optimizer.state_dict(),
+                                "scheduler_state": scheduler.state_dict(),
+                                "best_key": best_key,
+                                "best_state": best_state,
+                                "best_epoch": best_epoch,
+                                "patience": patience,
+                                "rng_state": capture_rng_state(),
+                            },
+                        )
+                        LOGGER.info("Saved resumable checkpoint at %s", checkpoint_path)
 
             validation_predictions = predict(model, validation_loader, device)
             validation_labels = [item.binary_label for item in validation_examples]
@@ -408,7 +625,7 @@ def main() -> int:
             key = (metrics["recall"], metrics["macro_f1"], -operating.threshold)
             epoch_row = {
                 "epoch": epoch,
-                "mean_training_loss": running_loss / max(1, len(train_loader)),
+                "mean_training_loss": running_loss / max(1, batch_count),
                 "operating_point": asdict(operating),
                 "validation_primary": metrics,
             }
@@ -418,17 +635,45 @@ def main() -> int:
             )
             if best_key is None or key > best_key:
                 best_key = key
-                best_state = {name: tensor.detach().cpu().clone() for name, tensor in model.state_dict().items()}
+                best_state = trainable_state_dict(model)
                 best_epoch = epoch_row
                 patience = 0
             else:
                 patience += 1
                 if patience > int(training_config["early_stopping_patience"]):
                     break
+            resume_batch = 0
+            if epoch < epochs:
+                save_step_checkpoint(
+                    checkpoint_path,
+                    {
+                        "schema_version": "1.0.0",
+                        "signature": signature,
+                        "elapsed_training_seconds": elapsed_before_resume
+                        + time.perf_counter()
+                        - started,
+                        "active_seed": seed,
+                        "completed_seeds": sorted(completed_seeds),
+                        "seed_runs": seed_runs,
+                        "deployment_manifest": deployment_manifest,
+                        "epoch": epoch + 1,
+                        "next_batch": 0,
+                        "optimizer_steps": optimizer_steps,
+                        "running_loss": 0.0,
+                        "trainable_state": trainable_state_dict(model),
+                        "optimizer_state": optimizer.state_dict(),
+                        "scheduler_state": scheduler.state_dict(),
+                        "best_key": best_key,
+                        "best_state": best_state,
+                        "best_epoch": best_epoch,
+                        "patience": patience,
+                        "rng_state": capture_rng_state(),
+                    },
+                )
 
         if best_state is None or best_epoch is None:
             raise RuntimeError("Training produced no checkpoint")
-        model.load_state_dict(best_state)
+        load_trainable_state_dict(model, best_state)
         model.to(device)
         run = {"seed": seed, "best": best_epoch, "parameters": parameter_summary}
         seed_runs.append(run)
@@ -442,7 +687,24 @@ def main() -> int:
                 "exit_threshold": threshold * exit_ratio,
                 "heads_path": str(heads_path),
             }
-        del model
+        completed_seeds.add(seed)
+        save_step_checkpoint(
+            checkpoint_path,
+            {
+                "schema_version": "1.0.0",
+                "signature": signature,
+                "elapsed_training_seconds": elapsed_before_resume
+                + time.perf_counter()
+                - started,
+                "active_seed": None,
+                "completed_seeds": sorted(completed_seeds),
+                "seed_runs": seed_runs,
+                "deployment_manifest": deployment_manifest,
+                "optimizer_steps": 0,
+            },
+        )
+        resume_payload = None
+        del model, optimizer, scheduler
 
     if deployment_manifest is None:
         raise RuntimeError("Deployment seed was not exported")
@@ -524,7 +786,14 @@ def main() -> int:
         "seed_validation_recall": summarize_seed_values(
             [row["best"]["validation_primary"]["recall"] for row in seed_runs]
         ),
-        "runtime_seconds": time.perf_counter() - started,
+        "runtime_seconds": elapsed_before_resume + time.perf_counter() - started,
+        "resumable_training": {
+            "resumed_from_checkpoint": resumed_from_checkpoint,
+            "recovered_optimizer_steps": recovered_optimizer_steps,
+            "checkpoint_every_optimizer_steps": checkpoint_interval,
+            "progress_log_every_optimizer_steps": progress_interval,
+            "checkpoint_removed_after_success": True,
+        },
         "limitations": [
             "Positive labels are source-silver; unobserved tactics inside annotated conversations are fixed 0.25-weight negatives, not confirmed absences.",
             "feasibility_only: multilingual DistilBERT with frozen embeddings and one trainable layer is a CPU harness, not evidence about IndicBERT, HingRoBERTa-Mixed, MuRIL, or XLM-R.",
@@ -543,6 +812,8 @@ def main() -> int:
     write_json(args.report_dir / "metrics.json", report)
     write_json(args.report_dir / "run_metadata.json", metadata)
     write_json(args.report_dir / "config.json", config)
+    if checkpoint_path.exists():
+        checkpoint_path.unlink()
     LOGGER.info("Completed transformer run in %.1f seconds", report["runtime_seconds"])
     return 0
 
