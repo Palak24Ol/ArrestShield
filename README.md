@@ -14,14 +14,14 @@ This repository is an implemented research prototype, not a production detector.
 | SGD and SVD-XGBoost ladder | Trained across seeds 17, 42, and 93 | `reports/model_ladder_v1` |
 | Strict source audit | Failed the pre-registered 5% FPR gate: SGD 11.15%, XGBoost 7.02% source-macro FPR | `reports/model_ladder_v1/loso_metrics.json` |
 | Multi-task transformer | Causal-prefix, head-tail, multi-head trainer implemented with exact step resume; CPU feasibility training is local | `configs/model/multitask_transformer.json` |
-| XGBoost risk fusion | Trained across three seeds using out-of-fold base scores; research-only | `reports/risk_fusion_v1` |
+| XGBoost risk fusion | Trained across three seeds using out-of-fold base scores; strict source audit fails at 27.71% macro FPR | `reports/risk_fusion_v1` |
 | Whisper ASR | Local multilingual Whisper-tiny works end to end; Hindi/Hinglish backend selection remains gated | `reports/asr_smoke_v1` |
 | Entity extraction | Local deterministic extraction with sensitive-value redaction by default | `src/arrestshield/entities.py` |
 | Inference API | Text/audio routes, research status, redaction, and honeypot boundary implemented | `docs/INFERENCE_API.md` |
 | Human-gold promotion set | Not collected: 0 of 150 required conversations | `data/human_test/COLLECTION_STATUS.json` |
 | Audio validation set | Not collected; no backend is promoted from one English smoke clip | `data/audio_validation/COLLECTION_STATUS.json` |
 
-The ordinary mixed-source split produces very high scores, including 98.43% supporting test recall for XGBoost risk fusion at seed 42. Those values are not treated as real-world performance because every current positive label is silver, 71% of positive supervision is synthetic, and source/style shortcuts are measurable. Promotion is blocked until the strict source gates and independently annotated human-gold gate pass.
+The ordinary mixed-source split produces very high scores, including 98.43% supporting test recall for XGBoost risk fusion at seed 42. Those values are not treated as real-world performance because every current positive label is silver, 71% of positive supervision is synthetic, and source/style shortcuts are measurable. The strict risk-fusion source audit confirms this: 27.71% source-macro FPR, 80.95% worst-source FPR, and only one of four held-out sources below the 5% gate. Promotion is blocked until the strict source gates and independently annotated human-gold gate pass.
 
 ## Data truth
 

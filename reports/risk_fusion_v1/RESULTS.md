@@ -12,4 +12,17 @@ The saved artifact is `research_only_not_promoted`. Its SHA-256 is `d99e91170f20
 
 These near-perfect mixed-source results are not a production claim. The current positive pool is entirely silver, 71% of positive supervision is synthetic, and source/style shortcuts are already known to inflate ordinary splits. The frozen base detector itself scored perfectly on this validation view, so risk fusion did not demonstrate meaningful generalization improvement there. The strict leave-one-mixed-source-out audit and the future frozen human-gold set remain the decisive evidence.
 
+## Strict leave-one-source-out audit
+
+The strict audit refit the TF-IDF representation, base classifier, out-of-fold base scores, threshold-selection view, and XGBoost fusion model after excluding each mixed-label source. It used seeds 17, 42, and 93 and required every source/seed run—not merely the average—to remain at or below 5% FPR.
+
+| Held-out source | Mean recall | Mean FPR | Mean macro-F1 | Gate |
+| --- | ---: | ---: | ---: | --- |
+| `indian_cyber_scam_phonecall_hinglish` | 0.9651 | 0.8095 | 0.5894 | Fail |
+| `indian_multilingual_scam_messages` | 0.0000 | 0.0000 | 0.3846 | Fail: zero recall; only 8 test rows |
+| `synthetic_multi_agent_scam_conversation` | 0.9216 | 0.2604 | 0.8311 | Fail |
+| `synthetic_scam_dialogue` | 0.8411 | 0.0385 | 0.9013 | Pass |
+
+Across sources, recall was `0.68196 ± 0.00978`, FPR was `0.27710 ± 0.00000`, macro-F1 was `0.67659 ± 0.00498`, and the worst source FPR was `0.80952`. The strict gate failed. These results show that risk fusion did not solve the corpus source/style shortcut problem and must remain a research artifact. The full machine-readable result is `loso_metrics.json`.
+
 Promotion failed because the independently annotated frozen human-gold set is not collected. The deployment policy therefore blocks honeypot handoff even when this model crosses its threshold. No LLM produced a feature, label, threshold, or decision.

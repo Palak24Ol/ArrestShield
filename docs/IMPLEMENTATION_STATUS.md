@@ -11,7 +11,7 @@ This matrix distinguishes implemented code, completed local training, verified a
 | Multi-task transformer | Binary, scam type, tactic, and stage heads; causal prefix labels; head-tail 256-token context; partial tactic supervision; multi-loss training | `src/arrestshield/multitask.py`, `scripts/train_multitask_transformer.py`, `configs/model/multitask_transformer.json` | Implementation and smoke export verified; full CPU run must produce `reports/multitask_transformer_v1` |
 | Transformer recovery | Trainable-only atomic step checkpoints with optimizer, scheduler, RNG state, completed seeds, deterministic sortish batches | `tests/test_transformer_resume.py`, local `training_checkpoint.pt` during a run | Implemented; checkpoint deleted only after successful report/export |
 | Risk fusion | XGBoost over out-of-fold base scores plus deterministic lexical/entity features | `reports/risk_fusion_v1/metrics.json`, local artifact SHA-256 | Three seeds trained; research-only |
-| Strict fusion source audit | Excludes each source before every representation, OOF base-score, and fusion fit | `configs/evaluation/risk_fusion_loso.json`, `scripts/evaluate_risk_fusion_loso.py` | Report required at `reports/risk_fusion_v1/loso_metrics.json` |
+| Strict fusion source audit | Excludes each source before every representation, OOF base-score, and fusion fit | `reports/risk_fusion_v1/loso_metrics.json` | Complete; fails gate with 27.71% source-macro FPR and 80.95% worst-source FPR |
 | Audio-to-text | Local Whisper-family adapter with validation, WER/CER, downstream detector comparison | `reports/asr_smoke_v1`, `docs/ASR_EVALUATION.md` | English functionality verified; no Hindi/Hinglish backend promotion |
 | ASR alternative | AI4Bharat Vistaar IndicWhisper Hindi registered behind compatible local checkpoint | `configs/model/asr_backends.json` | Registered GPU candidate; not installed on CPU laptop |
 | Entity extraction | UPI, phone, email, URL, account/Aadhaar/OTP candidates, amounts, cases, authorities, payment apps | `src/arrestshield/entities.py`, `tests/test_entities.py` | Implemented; sensitive values redacted by default |
@@ -29,7 +29,7 @@ The local implementation is complete only when all of the following are true:
 
 1. The full configured three-seed transformer run writes reconstructable artifacts and compact reports.
 2. `MultiTaskPredictor` reconstructs that export and returns all four trained heads on a real text request.
-3. The strict XGBoost fusion source audit finishes and its result is documented without promotion-by-average.
+3. The completed strict XGBoost fusion source audit remains documented without promotion-by-average.
 4. The full automated suite passes.
 5. `scripts/verify_local_artifacts.py` passes with the transformer requirement enabled.
 6. The real text and audio API path loads the final local artifacts, redacts sensitive entities, deletes temporary audio, and keeps honeypot handoff blocked.
