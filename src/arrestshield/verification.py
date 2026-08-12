@@ -190,9 +190,43 @@ def verify_local_artifacts(
                 )
             )
 
+    classical_report = root / "reports/classical_multitask_v1/run_metadata.json"
+    classical_manifest = root / "artifacts/models/classical_multitask_v1/manifest.json"
     transformer_report = root / "reports/multitask_transformer_v1/run_metadata.json"
     transformer_manifest = root / "artifacts/models/multitask_transformer_v1/manifest.json"
-    if transformer_report.is_file() and transformer_manifest.is_file():
+    if classical_report.is_file() and classical_manifest.is_file():
+        metadata = read_json(classical_report)
+        checks.extend(
+            [
+                verify_sha256(
+                    root,
+                    "artifacts/models/classical_multitask_v1/manifest.json",
+                    str(metadata["manifest_sha256"]),
+                    "classical-multitask-manifest",
+                ),
+                verify_sha256(
+                    root,
+                    "artifacts/models/classical_multitask_v1/classical_multitask_heads.joblib",
+                    str(metadata["heads_sha256"]),
+                    "classical-multitask-heads",
+                ),
+                verify_json_value(
+                    root,
+                    "artifacts/models/classical_multitask_v1/manifest.json",
+                    ("llm_used_for_detection",),
+                    False,
+                    "classical-multitask-llm-boundary",
+                ),
+                verify_json_value(
+                    root,
+                    "artifacts/models/classical_multitask_v1/manifest.json",
+                    ("used_as_api_decision_source",),
+                    False,
+                    "classical-multitask-auxiliary-only",
+                ),
+            ]
+        )
+    elif transformer_report.is_file() and transformer_manifest.is_file():
         metadata = read_json(transformer_report)
         checks.extend(
             [
@@ -220,10 +254,10 @@ def verify_local_artifacts(
     else:
         checks.append(
             VerificationCheck(
-                "multitask-transformer-artifact",
+                "multitask-artifact",
                 "failed" if require_transformer else "skipped",
-                "artifacts/models/multitask_transformer_v1",
-                detail="full exported artifact/report not available",
+                "artifacts/models/classical_multitask_v1",
+                detail="neither completed classical nor transformer multi-task artifact/report is available",
             )
         )
 

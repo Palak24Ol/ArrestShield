@@ -17,6 +17,21 @@ from arrestshield.evaluation import choose_threshold, early_detection_metrics  #
 
 
 class TrainingFoundationTests(unittest.TestCase):
+    def test_classical_multitask_config_is_pre_registered(self) -> None:
+        config = json.loads(
+            (PROJECT_ROOT / "configs/model/classical_multitask.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(config["seeds"], [17, 42, 93])
+        self.assertEqual(config["deployment_seed"], 42)
+        self.assertEqual(config["evaluation"]["selection_split"], "validation")
+        self.assertFalse(config["evaluation"]["test_used_for_selection"])
+        self.assertEqual(
+            config["shared_representation"]["fit_scope"], "training_split_only"
+        )
+        self.assertFalse(config["llm_used_for_detection"])
+
     def test_format_conversation_preserves_role_and_unicode(self) -> None:
         text, turns = format_conversation(
             [

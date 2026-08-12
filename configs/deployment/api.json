@@ -9,6 +9,8 @@
   "models": {
     "base_detector_path": "artifacts/models/model_ladder_v1/selected_detector.joblib",
     "risk_fusion_path": "artifacts/models/risk_fusion_v1/risk_fusion.joblib",
+    "multitask_backend": "classical",
+    "multitask_classical_path": "artifacts/models/classical_multitask_v1",
     "multitask_transformer_path": "artifacts/models/multitask_transformer_v1",
     "use_multitask_auxiliary_if_available": true,
     "multitask_torch_threads": 4

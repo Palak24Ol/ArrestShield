@@ -11,6 +11,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, ConfigDict, Field
 
 from .asr import WhisperASR
+from .classical_multitask import ClassicalMultiTaskPredictor
 from .inference import DetectorEngine, InferencePolicy
 from .transformer_inference import MultiTaskPredictor
 
@@ -49,15 +50,21 @@ def load_service_components(
     )
     fusion_path = PROJECT_ROOT / config["models"]["risk_fusion_path"]
     auxiliary_predictor = None
+    backend = str(config["models"].get("multitask_backend", "classical"))
+    classical_path = PROJECT_ROOT / config["models"].get(
+        "multitask_classical_path", "artifacts/models/classical_multitask_v1"
+    )
     transformer_path = PROJECT_ROOT / config["models"]["multitask_transformer_path"]
-    if (
-        bool(config["models"].get("use_multitask_auxiliary_if_available", True))
-        and (transformer_path / "manifest.json").exists()
-    ):
-        auxiliary_predictor = MultiTaskPredictor(
-            transformer_path,
-            torch_threads=int(config["models"].get("multitask_torch_threads", 4)),
-        ).predict
+    if bool(config["models"].get("use_multitask_auxiliary_if_available", True)):
+        if backend == "classical" and (classical_path / "manifest.json").exists():
+            auxiliary_predictor = ClassicalMultiTaskPredictor(classical_path).predict
+        elif backend == "transformer" and (transformer_path / "manifest.json").exists():
+            auxiliary_predictor = MultiTaskPredictor(
+                transformer_path,
+                torch_threads=int(config["models"].get("multitask_torch_threads", 4)),
+            ).predict
+        elif backend not in {"classical", "transformer"}:
+            raise ValueError(f"Unsupported multitask_backend: {backend}")
     engine = DetectorEngine.from_paths(
         PROJECT_ROOT / config["models"]["base_detector_path"],
         policy,
