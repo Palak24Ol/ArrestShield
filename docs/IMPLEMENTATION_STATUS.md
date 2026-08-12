@@ -20,6 +20,7 @@ This matrix distinguishes implemented code, completed local training, verified a
 | Human-gold test | Consent, two annotations, adjudication, evidence spans, quotas, leak checks, write-once freeze | `configs/data/human_frozen_test_protocol.json`, `scripts/freeze_human_test_set.py` | 0/150 collected; promotion blocked |
 | Hindi/Hinglish audio validation | Manifest schema, consent/license, PII and both-class gates, downstream selection rule | `configs/data/audio_validation_record.schema.json`, `scripts/evaluate_asr.py` | 0 records collected; ASR promotion blocked |
 | Artifact integrity | Direct data/model/checkpoint hashes and policy-boundary checks | `scripts/verify_local_artifacts.py` | Final verification must pass without `--allow-incomplete-transformer` |
+| Ablation protocol | Fixed multi-task, context, fusion, entity, lexical, and ASR variants with unchanged selection gates | `docs/VALIDATION_AND_TESTING.md` | Pre-registered; supporting compute, never a substitute for human-gold evidence |
 | LLM boundary | Explicit false flags in artifacts/config/API; honeypot handoff disabled while research-only | `configs/deployment/api.json`, API contract tests, artifact verifier | Enforced: LLM never decides scam status |
 
 ## Completion gates for the local ML build

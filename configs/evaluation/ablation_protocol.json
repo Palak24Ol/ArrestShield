@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "protocol_id": "arrestshield-ablation-v1",
+  "base_model_config": "configs/model/multitask_transformer.json",
+  "base_fusion_config": "configs/model/risk_fusion.json",
+  "invariants": {
+    "conversation_splits_unchanged": true,
+    "seeds": [17, 42, 93],
+    "training_budget_unchanged_within_model_family": true,
+    "threshold_selected_on_validation_only": true,
+    "maximum_hard_negative_fpr": 0.05,
+    "test_used_for_selection": false,
+    "primary_metric": "recall_at_fixed_fpr"
+  },
+  "transformer_variants": {
+    "binary_head_only": {"loss_weights": {"binary": 1.0, "scam_type": 0.0, "tactics": 0.0, "stage": 0.0}},
+    "no_tactic_head": {"loss_weights": {"binary": 1.0, "scam_type": 0.4, "tactics": 0.0, "stage": 0.2}},
+    "no_stage_head": {"loss_weights": {"binary": 1.0, "scam_type": 0.4, "tactics": 0.3, "stage": 0.0}},
+    "full_context_only": {"positive_prefix_fractions": [1.0], "negative_prefix_fractions": [1.0]},
+    "right_truncation_control": {"context_encoding": "right_truncation", "max_length": 256}
+  },
+  "fusion_variants": {
+    "base_score_only_fusion": {"feature_groups": ["base_scam_score"]},
+    "no_entity_fusion": {"exclude_feature_prefixes": ["entity_"]},
+    "no_lexical_fusion": {"exclude_feature_prefixes": ["lexical_"]}
+  },
+  "asr_variants": {
+    "reference_transcript": {"input": "manual_reference_transcript"},
+    "asr_transcript": {"input": "selected_asr_backend_transcript"}
+  },
+  "required_metrics": [
+    "validation_recall_at_fixed_fpr",
+    "validation_false_positive_rate",
+    "validation_macro_f1",
+    "median_stable_scammer_turn",
+    "undetected_rate",
+    "mean_and_standard_deviation_across_seeds"
+  ],
+  "llm_used_for_any_ablation": false
+}

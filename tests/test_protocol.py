@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import sys
 import unittest
 
@@ -17,6 +18,27 @@ from arrestshield.protocol import (  # noqa: E402
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_ablation_protocol_keeps_selection_invariants(self) -> None:
+        protocol = json.loads(
+            (PROJECT_ROOT / "configs/evaluation/ablation_protocol.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(protocol["invariants"]["seeds"], [17, 42, 93])
+        self.assertEqual(protocol["invariants"]["maximum_hard_negative_fpr"], 0.05)
+        self.assertFalse(protocol["invariants"]["test_used_for_selection"])
+        self.assertFalse(protocol["llm_used_for_any_ablation"])
+        self.assertEqual(
+            set(protocol["transformer_variants"]),
+            {
+                "binary_head_only",
+                "no_tactic_head",
+                "no_stage_head",
+                "full_context_only",
+                "right_truncation_control",
+            },
+        )
+
     def test_operating_point_respects_fpr_constraint(self) -> None:
         labels = [0, 0, 0, 0, 1, 1]
         scores = [0.1, 0.2, 0.3, 0.6, 0.7, 0.8]

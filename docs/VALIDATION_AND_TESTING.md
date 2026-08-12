@@ -16,6 +16,24 @@ Tests use small deterministic fixtures and mocked models for logic. Real-artifac
 6. Treat test metrics as supporting-only after model family/checkpoint selection.
 7. Require the independent frozen human-gold set before promotion.
 
+## Pre-registered ablations
+
+Ablations use the same conversation splits, seeds, training budget, hard-negative threshold rule, and supporting test policy as the full model. They are diagnostics, not alternative selection metrics. Report validation recall/FPR, macro-F1, stable scammer-turn latency, and mean plus standard deviation; do not select whichever ablation happens to have the best test result.
+
+| Ablation ID | Change from full system | Question answered |
+|---|---|---|
+| `binary_head_only` | Set scam-type, tactic, and stage loss weights to zero | Does auxiliary supervision help binary detection? |
+| `no_tactic_head` | Set tactic loss weight to zero | Does partial tactic supervision help or add label noise? |
+| `no_stage_head` | Set stage loss weight to zero | Does causal stage supervision improve early detection? |
+| `full_context_only` | Train only 100% conversation windows | Do causal 25%/50% prefix windows improve detection latency? |
+| `right_truncation_control` | Replace head-tail context with right truncation at the same 256-token budget | Does preserving late payment evidence matter? |
+| `base_score_only_fusion` | XGBoost receives only the out-of-fold base score | Do engineered fusion signals add value beyond calibration? |
+| `no_entity_fusion` | Remove all entity-count features | Are extracted operational entities contributing? |
+| `no_lexical_fusion` | Remove all deterministic tactic/stage signals | Are lexical rules driving apparent performance? |
+| `reference_transcript` | Detect from manual transcript rather than ASR text | How much detection loss is attributable to ASR? |
+
+The transformer ablations are GPU-comparison work after the primary feasibility run and human-label improvement. On this CPU laptop, running nine additional three-seed transformer fits would delay the required full model without strengthening the missing human-gold evidence. The exact variants remain fixed here before such compute is acquired.
+
 ## Required edge cases
 
 - Empty and over-limit conversations are rejected.
