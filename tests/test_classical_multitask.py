@@ -44,6 +44,13 @@ def test_probability_alignment_preserves_missing_manifest_column() -> None:
     assert output[0].tolist() == pytest.approx([0.25, 0.0, 0.75])
 
 
+def test_probability_alignment_supports_local_to_global_class_map() -> None:
+    output = aligned_probabilities(
+        FakeMulticlassModel(), np.zeros((1, 2)), 4, output_class_ids=[1, 3]
+    )
+    assert output[0].tolist() == pytest.approx([0.0, 0.25, 0.0, 0.75])
+
+
 def test_validation_threshold_selection_is_deterministic() -> None:
     first = select_f1_threshold([0, 0, 1, 1], [0.1, 0.3, 0.7, 0.9])
     second = select_f1_threshold([0, 0, 1, 1], [0.1, 0.3, 0.7, 0.9])

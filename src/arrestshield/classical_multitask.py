@@ -41,10 +41,21 @@ def balanced_sample_weights(
     )
 
 
-def aligned_probabilities(model: Any, matrix: Any, class_count: int) -> np.ndarray:
+def aligned_probabilities(
+    model: Any,
+    matrix: Any,
+    class_count: int,
+    output_class_ids: Sequence[int] | None = None,
+) -> np.ndarray:
     """Align predict_proba columns to manifest class indices."""
     raw = np.asarray(model.predict_proba(matrix), dtype=np.float64)
-    classes = [int(value) for value in model.classes_]
+    classes = (
+        [int(value) for value in output_class_ids]
+        if output_class_ids is not None
+        else [int(value) for value in model.classes_]
+    )
+    if raw.shape[1] != len(classes):
+        raise ValueError("Probability columns do not match the supplied class mapping")
     output = np.zeros((raw.shape[0], class_count), dtype=np.float64)
     for source_index, class_index in enumerate(classes):
         if class_index < 0 or class_index >= class_count:
@@ -225,11 +236,13 @@ class ClassicalMultiTaskPredictor:
                 self._bundle["scam_type_model"],
                 dense,
                 len(self.manifest["labels"]["scam_types"]),
+                self._bundle["scam_type_class_ids"],
             )[0]
             stage_scores = aligned_probabilities(
                 self._bundle["stage_model"],
                 dense,
                 len(self.manifest["labels"]["stages"]),
+                self._bundle["stage_class_ids"],
             )[0]
             tactic_scores = {
                 name: float(positive_probabilities(model, dense)[0])

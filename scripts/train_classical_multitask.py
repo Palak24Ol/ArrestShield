@@ -67,6 +67,17 @@ def class_counts(values: Sequence[int], names: Sequence[str]) -> dict[str, int]:
     return {name: int(counts[index]) for index, name in enumerate(names)}
 
 
+def observed_class_mapping(values: Sequence[int]) -> tuple[list[int], dict[int, int]]:
+    observed = sorted(int(value) for value in np.unique(np.asarray(values, dtype=np.int64)))
+    if len(observed) < 2:
+        raise ValueError("A multi-class head requires at least two observed training classes")
+    return observed, {global_id: local_id for local_id, global_id in enumerate(observed)}
+
+
+def remap_labels(values: Sequence[int], mapping: Mapping[int, int]) -> np.ndarray:
+    return np.asarray([mapping[int(value)] for value in values], dtype=np.int64)
+
+
 def build_model(config: Mapping[str, Any], seed: int, objective: str, classes: int) -> XGBClassifier:
     values = config["xgboost"]
     kwargs: dict[str, Any] = {
@@ -147,6 +158,9 @@ def main() -> int:
     label_config = read_json(PROJECT_ROOT / config["label_config_path"])
     if config.get("llm_used_for_detection") is not False:
         raise ValueError("Classical multi-task config must prohibit LLM detection")
+    # Fail before expensive fitting if the selected output location is not writable.
+    args.artifact_dir.mkdir(parents=True, exist_ok=True)
+    args.report_dir.mkdir(parents=True, exist_ok=True)
     data = load_multitask_examples(args.conversations, args.splits, label_config)
     sampled = source_balanced_training_sample(
         data["train"],
@@ -190,6 +204,14 @@ def main() -> int:
     type_validation_labels = [item.scam_type_label for item in validation]
     type_test_labels = [item.scam_type_label for item in test]
     type_weights = balanced_sample_weights(type_train_labels, base_train_weights, maximum_class_weight)
+    type_class_ids, type_class_map = observed_class_mapping(type_train_labels)
+    type_train_local = remap_labels(type_train_labels, type_class_map)
+    type_validation_fit_mask = np.asarray(
+        [value in type_class_map for value in type_validation_labels], dtype=bool
+    )
+    type_validation_local = remap_labels(
+        np.asarray(type_validation_labels)[type_validation_fit_mask], type_class_map
+    )
 
     stage_train_mask = np.asarray([item.stage_mask > 0 for item in train], dtype=bool)
     stage_validation_mask = np.asarray([item.stage_mask > 0 for item in validation], dtype=bool)
@@ -204,6 +226,14 @@ def main() -> int:
         stage_train_labels,
         [item.sample_weight for item in stage_train],
         maximum_class_weight,
+    )
+    stage_class_ids, stage_class_map = observed_class_mapping(stage_train_labels)
+    stage_train_local = remap_labels(stage_train_labels, stage_class_map)
+    stage_validation_fit_mask = np.asarray(
+        [value in stage_class_map for value in stage_validation_labels], dtype=bool
+    )
+    stage_validation_local = remap_labels(
+        np.asarray(stage_validation_labels)[stage_validation_fit_mask], stage_class_map
     )
 
     tactic_support = {
@@ -220,27 +250,46 @@ def main() -> int:
     deployment_thresholds: dict[str, float] | None = None
     for seed in seeds:
         LOGGER.info("Training classical multi-task seed %s", seed)
-        type_model = build_model(config, seed, "multi:softprob", len(scam_types))
+        type_model = build_model(config, seed, "multi:softprob", len(type_class_ids))
         type_model.fit(
             train_matrix,
-            np.asarray(type_train_labels),
+            type_train_local,
             sample_weight=type_weights,
-            eval_set=[(validation_matrix, np.asarray(type_validation_labels))],
+            eval_set=[(validation_matrix[type_validation_fit_mask], type_validation_local)],
             verbose=False,
         )
-        type_validation_scores = aligned_probabilities(type_model, validation_matrix, len(scam_types))
-        type_test_scores = aligned_probabilities(type_model, test_matrix, len(scam_types))
+        type_validation_scores = aligned_probabilities(
+            type_model, validation_matrix, len(scam_types), type_class_ids
+        )
+        type_test_scores = aligned_probabilities(
+            type_model, test_matrix, len(scam_types), type_class_ids
+        )
 
-        stage_model = build_model(config, seed, "multi:softprob", len(stages))
+        stage_model = build_model(config, seed, "multi:softprob", len(stage_class_ids))
         stage_model.fit(
             train_matrix[stage_train_mask],
-            np.asarray(stage_train_labels),
+            stage_train_local,
             sample_weight=stage_weights,
-            eval_set=[(validation_matrix[stage_validation_mask], np.asarray(stage_validation_labels))],
+            eval_set=[
+                (
+                    validation_matrix[stage_validation_mask][stage_validation_fit_mask],
+                    stage_validation_local,
+                )
+            ],
             verbose=False,
         )
-        stage_validation_scores = aligned_probabilities(stage_model, validation_matrix[stage_validation_mask], len(stages))
-        stage_test_scores = aligned_probabilities(stage_model, test_matrix[stage_test_mask], len(stages))
+        stage_validation_scores = aligned_probabilities(
+            stage_model,
+            validation_matrix[stage_validation_mask],
+            len(stages),
+            stage_class_ids,
+        )
+        stage_test_scores = aligned_probabilities(
+            stage_model,
+            test_matrix[stage_test_mask],
+            len(stages),
+            stage_class_ids,
+        )
 
         tactic_models: dict[str, Any] = {}
         tactic_thresholds: dict[str, float] = {}
@@ -301,7 +350,9 @@ def main() -> int:
                 "model_family": "xgboost_classical_multitask_auxiliary",
                 "seed": int(seed),
                 "scam_type_model": type_model,
+                "scam_type_class_ids": type_class_ids,
                 "stage_model": stage_model,
+                "stage_class_ids": stage_class_ids,
                 "tactic_models": tactic_models,
                 "llm_used_for_detection": False,
             }
@@ -309,8 +360,6 @@ def main() -> int:
 
     if deployment_models is None or deployment_thresholds is None:
         raise RuntimeError("Deployment seed was not trained")
-    args.artifact_dir.mkdir(parents=True, exist_ok=True)
-    args.report_dir.mkdir(parents=True, exist_ok=True)
     heads_path = args.artifact_dir / "classical_multitask_heads.joblib"
     joblib.dump(deployment_models, heads_path, compress=3)
     binary_bundle = joblib.load(binary_path)
