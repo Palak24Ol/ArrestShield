@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "arrestshield-mixed-source-detector-v1",
+  "created_at_utc": "2026-08-12T17:15:57.412929+00:00",
+  "git_revision": "9b0da2da819959c34a87252ee3968f92cd0811ec",
+  "seeds": [
+    17,
+    42,
+    93
+  ],
+  "training_regime": "mixed_label_sources_only",
+  "mixed_sources": [
+    "indian_cyber_scam_phonecall_hinglish",
+    "indian_multilingual_scam_messages",
+    "synthetic_multi_agent_scam_conversation",
+    "synthetic_scam_dialogue"
+  ],
+  "excluded_single_label_sources": [
+    "banking77",
+    "daily_dialog",
+    "schema_guided_dialogue"
+  ],
+  "augmentation_rows": 0,
+  "augmentation_is_train_split_only": true,
+  "corpus_summary": {
+    "retained": 52206,
+    "split_counts": {
+      "train": 36626,
+      "validation": 7819,
+      "test": 7761
+    },
+    "label_counts": {
+      "train:0": 34968,
+      "train:1": 1658,
+      "validation:0": 7540,
+      "validation:1": 279,
+      "test:0": 7442,
+      "test:1": 319
+    }
+  },
+  "results": {
+    "ordinary_mixed_source_test": {
+      "seeds": [
+        17,
+        42,
+        93
+      ],
+      "positives": 319,
+      "negatives": 252,
+      "roc_auc_mean": 1.0,
+      "roc_auc_std": 0.0,
+      "recall_mean": 0.9989550679205852,
+      "false_positive_rate_mean": 0.0,
+      "false_positive_rate_wilson_95": [
+        0.0,
+        0.015015540865910781
+      ],
+      "negative_count_sufficient": true,
+      "measurement_note": null
+    },
+    "leave_one_source_out": {
+      "indian_cyber_scam_phonecall_hinglish": {
+        "seeds": [
+          17,
+          42,
+          93
+        ],
+        "positives": 86,
+        "negatives": 21,
+        "roc_auc_mean": 0.7558139534883722,
+        "roc_auc_std": 0.05475478463909845,
+        "recall_mean": 0.7674418604651163,
+        "false_positive_rate_mean": 0.5079365079365079,
+        "false_positive_rate_wilson_95": [
+          0.32369217900266756,
+          0.7165628770323705
+        ],
+        "negative_count_sufficient": false,
+        "measurement_note": "Only 21 held-out negatives; the FPR interval is too wide to support any claim.",
+        "train_rows": 2368
+      },
+      "indian_multilingual_scam_messages": {
+        "seeds": [
+          17,
+          42,
+          93
+        ],
+        "positives": 3,
+        "negatives": 5,
+        "roc_auc_mean": 0.9555555555555556,
+        "roc_auc_std": 0.03142696805273544,
+        "recall_mean": 0.0,
+        "false_positive_rate_mean": 0.0,
+        "false_positive_rate_wilson_95": [
+          0.0,
+          0.43449149475208104
+        ],
+        "negative_count_sufficient": false,
+        "measurement_note": "Only 5 held-out negatives; the FPR interval is too wide to support any claim.",
+        "train_rows": 2863
+      },
+      "synthetic_multi_agent_scam_conversation": {
+        "seeds": [
+          17,
+          42,
+          93
+        ],
+        "positives": 102,
+        "negatives": 96,
+        "roc_auc_mean": 1.0,
+        "roc_auc_std": 0.0,
+        "recall_mean": 0.7581699346405228,
+        "false_positive_rate_mean": 0.0,
+        "false_positive_rate_wilson_95": [
+          0.0,
+          0.03847694748481595
+        ],
+        "negative_count_sufficient": false,
+        "measurement_note": "Only 96 held-out negatives; the FPR interval is too wide to support any claim.",
+        "train_rows": 1668
+      },
+      "synthetic_scam_dialogue": {
+        "seeds": [
+          17,
+          42,
+          93
+        ],
+        "positives": 128,
+        "negatives": 130,
+        "roc_auc_mean": 0.9999599358974359,
+        "roc_auc_std": 2.8329598605236708e-05,
+        "recall_mean": 0.8619791666666666,
+        "false_positive_rate_mean": 0.0,
+        "false_positive_rate_wilson_95": [
+          0.0,
+          0.02870258574314712
+        ],
+        "negative_count_sufficient": true,
+        "measurement_note": null,
+        "train_rows": 1780
+      }
+    },
+    "headline": {
+      "primary_metric": "held_out_source_roc_auc",
+      "source_macro_roc_auc_all": 0.927832361235341,
+      "sources_with_sufficient_negatives": 1,
+      "sources_evaluated": 4,
+      "fpr_is_measurable": true
+    }
+  },
+  "runtime_seconds": 219.5520666999946,
+  "llm_used_for_detection": false,
+  "limitations": [
+    "All positive labels remain source-silver; no human-gold positives exist yet.",
+    "Held-out negative counts are small for the Indic sources, so FPR intervals are wide and no FPR claim is supported.",
+    "Any llm_synthetic augmentation enters the training split only and never validation or test.",
+    "No LLM produced a feature, score, threshold, or label."
+  ]
+}

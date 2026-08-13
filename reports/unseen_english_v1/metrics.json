@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "arrestshield-unseen-english-fpr-v1",
+  "created_at_utc": "2026-08-13T07:58:31.205719+00:00",
+  "git_revision": "9b0da2da819959c34a87252ee3968f92cd0811ec",
+  "seeds": [
+    17,
+    42,
+    93
+  ],
+  "training_regime": "mixed_label_sources_only",
+  "training_sources": [
+    "indian_cyber_scam_phonecall_hinglish",
+    "indian_multilingual_scam_messages",
+    "synthetic_multi_agent_scam_conversation",
+    "synthetic_scam_dialogue"
+  ],
+  "unseen_sources": [
+    "banking77",
+    "daily_dialog",
+    "schema_guided_dialogue"
+  ],
+  "train_rows": 2893,
+  "unseen_rows": 48216,
+  "per_source": {
+    "banking77": {
+      "mean_flagged": 2420,
+      "n": 13071,
+      "false_positive_rate": 0.18514268227373576,
+      "wilson_95": [
+        0.17857673184284598,
+        0.1918936530526774
+      ],
+      "per_seed_flagged": [
+        5637,
+        813,
+        810
+      ]
+    },
+    "daily_dialog": {
+      "mean_flagged": 19,
+      "n": 12320,
+      "false_positive_rate": 0.0015422077922077923,
+      "wilson_95": [
+        0.0009875593792074127,
+        0.002407615709703175
+      ],
+      "per_seed_flagged": [
+        58,
+        0,
+        0
+      ]
+    },
+    "schema_guided_dialogue": {
+      "mean_flagged": 1,
+      "n": 22825,
+      "false_positive_rate": 4.381161007667032e-05,
+      "wilson_95": [
+        7.733667899019391e-06,
+        0.0002481531660610533
+      ],
+      "per_seed_flagged": [
+        3,
+        0,
+        0
+      ]
+    }
+  },
+  "total": {
+    "mean_flagged": 2440,
+    "n": 48216,
+    "false_positive_rate": 0.05060560809689729,
+    "wilson_95": [
+      0.04868464622698119,
+      0.05259817507536003
+    ]
+  },
+  "seed_stability": {
+    "thresholds": [
+      0.6566610336303711,
+      0.8960098028182983,
+      0.879180371761322
+    ],
+    "threshold_min": 0.6566610336303711,
+    "threshold_max": 0.8960098028182983,
+    "flagged_per_seed": [
+      5698,
+      813,
+      810
+    ],
+    "flagged_ratio_max_over_min": 7.034567901234568
+  },
+  "synthetic_english_recall": {
+    "mean": 1.0,
+    "standard_deviation": 0.0,
+    "positives": 230
+  },
+  "runtime_seconds": 356.9775303000006,
+  "llm_used_for_detection": false,
+  "interpretation": [
+    "The aggregate FPR hides the failure: it is dominated by two corpora the detector finds easy.",
+    "banking77 is the domain closest to real deployment and is where the detector fails.",
+    "Threshold selection is unstable across seeds, so the operating point is not yet reproducible.",
+    "Synthetic English recall is 1.000 and is not evidence of real-world detection."
+  ]
+}

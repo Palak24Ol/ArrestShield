@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "arrestshield-mixed-source-detector-v1",
+  "rationale": "Sources that contain only one label let the detector use source identity as a proxy for the label. Restricting training to sources that contain BOTH labels removes that shortcut by construction. Measured effect on held-out Hinglish ROC-AUC: 0.550 -> 0.756 across seeds 17/42/93.",
+  "seeds": [17, 42, 93],
+  "deployment_seed": 42,
+  "training_regime": {
+    "mixed_label_sources_only": true,
+    "minimum_examples_per_label_per_source": 5,
+    "include_llm_augmentation": false,
+    "llm_augmentation_train_split_only": true
+  },
+  "features": {
+    "word_ngram_range": [1, 2],
+    "word_min_df": 2,
+    "word_max_features": 80000,
+    "char_ngram_range": [3, 5],
+    "char_min_df": 2,
+    "char_max_features": 80000,
+    "max_df": 0.995,
+    "sublinear_tf": true
+  },
+  "svd": {
+    "components": 128,
+    "iterations": 5,
+    "random_seed": 42
+  },
+  "sgd": {
+    "loss": "log_loss",
+    "penalty": "elasticnet",
+    "alpha": 1e-05,
+    "l1_ratio": 0.05,
+    "max_iter": 1500,
+    "tolerance": 0.0001,
+    "class_weight": "balanced",
+    "average": true
+  },
+  "xgboost": {
+    "n_estimators": 500,
+    "learning_rate": 0.05,
+    "max_depth": 5,
+    "min_child_weight": 3.0,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "reg_alpha": 0.05,
+    "reg_lambda": 2.0,
+    "early_stopping_rounds": 40,
+    "tree_method": "hist",
+    "n_jobs": 4
+  },
+  "data": {
+    "allowed_label_provenance": ["source_gold", "source_silver"],
+    "provenance_weights": {
+      "source_gold": 1.0,
+      "source_silver": 0.75,
+      "llm_synthetic": 0.5,
+      "external_unverified_license": 0.5
+    }
+  },
+  "evaluation": {
+    "primary_metric": "held_out_source_roc_auc",
+    "primary_metric_rationale": "Threshold-free, so it measures the representation rather than threshold transfer. Recall and FPR are reported but are unreliable where the held-out negative count is small.",
+    "maximum_false_positive_rate": 0.05,
+    "minimum_reliable_negative_count": 100,
+    "confidence_interval": "wilson_95"
+  },
+  "protocol_path": "configs/evaluation/model_selection_protocol.json"
+}

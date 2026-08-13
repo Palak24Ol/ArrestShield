@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0.0",
+  "service": {
+    "name": "ArrestShield Honeypot",
+    "version": "1.0.0",
+    "host": "127.0.0.1",
+    "port": 8100
+  },
+  "policy": {
+    "enabled": false,
+    "research_mode": false,
+    "require_production_eligible": true,
+    "minimum_scam_score": 0.0,
+    "maximum_turns": 20,
+    "maximum_session_seconds": 1800,
+    "maximum_reply_characters": 400
+  },
+  "handoff": {
+    "signature_algorithm": "hmac-sha256",
+    "secret_environment_variable": "ARRESTSHIELD_HANDOFF_SECRET",
+    "maximum_event_age_seconds": 300,
+    "reject_unsigned_events": true,
+    "idempotent_by": "event_id"
+  },
+  "llm": {
+    "provider": "groq",
+    "api_key_environment_variable": "GROQ_API_KEY",
+    "base_url": "https://api.groq.com/openai/v1/chat/completions",
+    "model": "llama-3.3-70b-versatile",
+    "temperature": 0.8,
+    "max_tokens": 220,
+    "timeout_seconds": 30,
+    "maximum_retries": 2
+  },
+  "persona": {
+    "display_name": "Sunita Rao",
+    "age": 63,
+    "city": "Pune",
+    "traits": [
+      "polite",
+      "slightly confused by technology",
+      "anxious but cooperative",
+      "asks clarifying questions",
+      "speaks Hinglish naturally"
+    ],
+    "objective": "Keep the caller engaged and let them reveal payment rails, identifiers, and scripts without ever transferring anything real."
+  },
+  "safety": {
+    "synthetic_identifiers_only": true,
+    "identifiers_are_deliberately_checksum_invalid": true,
+    "never_emit_operator_personal_data": true,
+    "refuse_non_scammer_targets": true,
+    "redact_model_output": true,
+    "transcripts_excluded_from_detector_training": true
+  },
+  "boundaries": {
+    "llm_used_for_detection": false,
+    "honeypot_can_change_scam_label": false,
+    "honeypot_requires_signed_detector_event": true,
+    "honeypot_output_is_never_training_evidence": true
+  }
+}

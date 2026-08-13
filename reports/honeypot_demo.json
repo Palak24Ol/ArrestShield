@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.0",
+  "conversation_id": "6b33f80a-5290-4b38-8508-7308ce2ede9a",
+  "event_id": "46869c83-36e6-4cc9-82e9-0574badee9c2",
+  "mode": "research_only",
+  "turns_used": 3,
+  "disengaged": false,
+  "disengage_reason": null,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Verification ke liye aapko apne account ka paisa RBI ke safe account me transfer karna hoga."
+    },
+    {
+      "role": "assistant",
+      "content": "Kaunsa account? Mera kaunsa account? Bank account hai 0000053367, wahi hai na? Aur ye RBI wala safe account kya hota hai? Mujhe thoda samjhaayein, please."
+    },
+    {
+      "role": "user",
+      "content": "Madam aap ATM jaakar 50000 transfer kijiye abhi"
+    },
+    {
+      "role": "assistant",
+      "content": "Arre, itni jaldi? Abhi? ATM jaane ke liye mujhe thoda samay lagega. Aur 50000 ka transfer karna hai, ye kitna zaruri hai? Kya ye RBI wala account mere 0000053367 account se juda hua hai? Mujhe thoda confusion hai, please samjhaayein."
+    },
+    {
+      "role": "user",
+      "content": "Account number likhiye 0000123456"
+    },
+    {
+      "role": "assistant",
+      "content": "Nahin, nahin, mere account number hai 0000053367, ye [REDACTED_ACCOUNT] kaunsa account hai? Mujhe thoda samjhaayein, main confuse ho gayi hoon."
+    }
+  ],
+  "audit": [
+    {
+      "turn": 1,
+      "at_utc": "2026-08-13T07:35:18.073406+00:00",
+      "redactions": [],
+      "raw_length": 154,
+      "reply_length": 154
+    },
+    {
+      "turn": 2,
+      "at_utc": "2026-08-13T07:35:19.110324+00:00",
+      "redactions": [],
+      "raw_length": 233,
+      "reply_length": 233
+    },
+    {
+      "turn": 3,
+      "at_utc": "2026-08-13T07:35:19.957347+00:00",
+      "redactions": [
+        "[REDACTED_ACCOUNT]x1"
+      ],
+      "raw_length": 135,
+      "reply_length": 143
+    }
+  ],
+  "synthetic_identity_verified": true,
+  "excluded_from_detector_training": true,
+  "usable_as_detector_evidence": false,
+  "llm_used_for_detection": false,
+  "generated_at_utc": "2026-08-13T07:35:19.957347+00:00"
+}
