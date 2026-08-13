@@ -1,5 +1,16 @@
 # ArrestShield Binary Baseline Results
 
+> **Superseded. Do not quote the F1 below as performance.**
+>
+> It is a random-split result produced under a corpus shortcut: 49,950 of 52,206
+> conversations came from three sources containing only legitimate examples, so
+> source identity was close to a perfect label. Holding out an entire source
+> drops Hinglish ROC-AUC to 0.550; the corrected mixed-source regime reaches
+> 0.756.
+>
+> Current numbers: `docs/ML_STATUS.md`. Retained for the record as the "before"
+> figure in the shortcut analysis.
+
 ## Reproducible engineering run (research only)
 
 - Code revision: `d7fe85917a467743451e706e51e247c26a68c2ec`

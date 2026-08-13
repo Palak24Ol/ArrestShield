@@ -1,9 +1,13 @@
 # ArrestShield ML Status
 
-**Supersedes `docs/ArrestShield_ML_Status_and_Testing_Guide.pdf` (12 August 2026).**
-That PDF's front page states "ML COMPONENT — Complete", which its own page 4
-contradicts. This document is the corrected status. Regenerate or withdraw the
-PDF before submission.
+**This file is the single source of truth for project status.**
+`docs/ArrestShield_ML_Status_and_Testing_Guide.pdf` is generated from it by
+`scripts/build_status_pdf.py`. Edit this markdown and rebuild; never edit the PDF
+directly.
+
+The earlier hand-written PDF (12 August 2026) claimed "ML COMPONENT - Complete"
+on its front page while its own page 4 listed the reasons production was blocked.
+Generating the PDF from this file removes that failure mode by construction.
 
 Last verified: 13 August 2026.
 

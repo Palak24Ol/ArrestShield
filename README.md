@@ -19,6 +19,9 @@ This repository is an implemented research prototype, not a production detector.
 | Whisper ASR | Local multilingual Whisper-tiny works end to end; Hindi/Hinglish backend selection remains gated | `reports/asr_smoke_v1` |
 | Entity extraction | Local deterministic extraction with sensitive-value redaction by default | `src/arrestshield/entities.py` |
 | Inference API | Text/audio routes, research status, redaction, and honeypot boundary implemented | `docs/INFERENCE_API.md` |
+| Mixed-source detector | Corrects the source shortcut: held-out Hinglish ROC-AUC 0.550 to 0.756 across three seeds | `reports/mixed_source_v1` |
+| Unseen-English false positives | 18.51% FPR on 13,071 banking conversations; 5.06% aggregate over 48,216 | `reports/unseen_english_v1` |
+| LLM honeypot | Signed handoff, default-deny gate, live engagement verified; blocked from live mode by policy | `docs/HONEYPOT.md` |
 | Human-gold promotion set | Not collected: 0 of 150 required conversations | `data/human_test/COLLECTION_STATUS.json` |
 | Audio validation set | Not collected; no backend is promoted from one English smoke clip | `data/audio_validation/COLLECTION_STATUS.json` |
 
@@ -27,6 +30,10 @@ The ordinary mixed-source split produces very high scores, including 98.43% supp
 ## Data truth
 
 The canonical build retains 49,950 negative and 2,256 positive conversations after deduplication. All 2,256 positives are source-silver; no positive conversation is human-gold. The negative pool is dominated by Banking77, DailyDialog, and Schema-Guided Dialogue. This imbalance is documented rather than hidden.
+
+Two consequences of that imbalance are measured rather than assumed. First, because those three corpora contain no scam examples, source identity was close to a perfect label; restricting training to sources holding both labels raises held-out Hinglish ROC-AUC from 0.550 to 0.756 while discarding 94% of the training data. Second, the detector has learned that financial vocabulary is itself suspicious: on 48,216 unseen English conversations it flags 18.51% of Banking77 against 0.15% of DailyDialog, a failure the 5.06% aggregate conceals.
+
+`indian_cyber_scam_phonecall_hinglish` ships 10,000 rows of which 9,257 are exact duplicates, leaving 743 unique conversations (633 scam, 110 legitimate). The Source counts table in `docs/datasets/CANONICAL_BUILD_REPORT.md` is labelled input-before-deduplication for this reason. Only 21 legitimate Hinglish conversations reach the held-out test view, so no Hinglish false-positive rate in this project is a measurable quantity.
 
 Raw, processed, audio, and model files are intentionally excluded from Git. Dataset identities, pinned revisions, licenses, download URLs, checksums, and blocked sources are recorded in `data/manifests/dataset_registry.json`. Gated, unlicensed, oversized, or language-inappropriate corpora are registered but never silently downloaded.
 
