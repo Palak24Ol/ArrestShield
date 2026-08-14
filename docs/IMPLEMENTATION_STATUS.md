@@ -6,6 +6,8 @@ This matrix distinguishes implemented code, completed local training, verified a
 |---|---|---|---|
 | Canonical multilingual data | Download registry, parsers, normalization, exact/near deduplication, grouped splitting, validators | `docs/datasets/CANONICAL_BUILD_REPORT.json`, `docs/datasets/PROCESSED_DATA_VALIDATION.json`, processed file hashes | Engineering dataset complete; not human-gold |
 | Binary baseline | Word/character TF-IDF plus class-weighted SGD, validation-only threshold | `reports/baseline_v1`, local artifact hash verification | Trained; research-only |
+| Calibrated mixed-source candidate | Character TF-IDF plus SGD, Platt calibration on a disjoint validation view, one pooled threshold across seeds | `reports/mixed_source_candidate_v2`, local artifact SHA-256 | Trained; selected research default; not promoted |
+| Frozen external text audit | Strict loader and evaluation-only manifest for 243 CC0 English scam-call transcripts | `reports/external_text_v1`, `src/arrestshield/external_evaluation.py` | Complete; 6.17% recall blocks promotion |
 | XGBoost baseline | TF-IDF, SVD, XGBoost across seeds 17/42/93 | `reports/model_ladder_v1/metrics.json` | Trained; not promoted |
 | Unseen-source control | Refits representation/model after excluding each mixed-label source | `reports/model_ladder_v1/loso_metrics.json` | Both classical families fail 5% FPR gate |
 | CPU multi-task detector | Selected SGD binary plus XGBoost scam-type, stage, and supported tactic heads over train-only TF-IDF/SVD | `reports/classical_multitask_v1/metrics.json`, local 1.92 MiB artifact | Three seeds trained; reconstructable; research-only auxiliary heads |
@@ -20,7 +22,7 @@ This matrix distinguishes implemented code, completed local training, verified a
 | Secure packaging | Non-root container, offline model flags, read-only artifact mount guidance | `deploy/Dockerfile`, `deploy/README.md` | Definition implemented; Docker Desktop engine must run to build locally |
 | Human-gold test | Consent, two annotations, adjudication, evidence spans, quotas, leak checks, write-once freeze | `configs/data/human_frozen_test_protocol.json`, `scripts/freeze_human_test_set.py` | 0/150 collected; promotion blocked |
 | Hindi/Hinglish audio validation | Manifest schema, consent/license, PII and both-class gates, downstream selection rule | `configs/data/audio_validation_record.schema.json`, `scripts/evaluate_asr.py` | 0 records collected; ASR promotion blocked |
-| Artifact integrity | Direct data/model hashes and policy-boundary checks | `reports/verification_v1/verification.json` | Passed 28/28 with no skips |
+| Artifact integrity | Direct data/model hashes and policy-boundary checks | `reports/verification_v1/verification.json` | Passed 34/34 with no skips |
 | Ablation protocol | Fixed multi-task, context, fusion, entity, lexical, and ASR variants with unchanged selection gates | `docs/VALIDATION_AND_TESTING.md` | Pre-registered; supporting compute, never a substitute for human-gold evidence |
 | LLM boundary | Explicit false flags in artifacts/config/API; honeypot handoff disabled while research-only | `configs/deployment/api.json`, API contract tests, artifact verifier | Enforced: LLM never decides scam status |
 
@@ -31,8 +33,8 @@ The local implementation is complete only when all of the following are true:
 1. A full configured three-seed multi-task run writes reconstructable artifacts and compact reports.
 2. The configured predictor reconstructs the export and returns binary, scam type, supported tactics, and stage on a real text request.
 3. The completed strict XGBoost fusion source audit remains documented without promotion-by-average.
-4. The full automated suite passes (68 tests).
-5. `scripts/verify_local_artifacts.py` passes with a completed multi-task artifact required (28/28 checks).
+4. The full automated suite passes (98 tests).
+5. `scripts/verify_local_artifacts.py` passes with a completed multi-task artifact required (34/34 checks).
 6. The real text and audio API path loads the final local artifacts, redacts sensitive entities, deletes temporary audio, and keeps honeypot handoff blocked.
 7. Project files are committed and `main` is synchronized with GitHub using the user's configured author identity.
 

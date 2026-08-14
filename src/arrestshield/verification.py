@@ -153,6 +153,34 @@ def verify_local_artifacts(
             )
         )
 
+    candidate_metadata_path = root / "reports/mixed_source_candidate_v2/run_metadata.json"
+    if candidate_metadata_path.is_file():
+        candidate = read_json(candidate_metadata_path)
+        checks.extend(
+            [
+                verify_sha256(
+                    root,
+                    "artifacts/models/mixed_source_candidate_v2/selected_detector.joblib",
+                    str(candidate["artifact_sha256"]),
+                    "calibrated-mixed-source-detector",
+                ),
+                verify_json_value(
+                    root,
+                    "reports/mixed_source_candidate_v2/run_metadata.json",
+                    ("promotion_status",),
+                    "research_only_not_promoted",
+                    "candidate-promotion-status",
+                ),
+                verify_json_value(
+                    root,
+                    "reports/mixed_source_candidate_v2/metrics.json",
+                    ("llm_used_for_detection",),
+                    False,
+                    "candidate-llm-boundary",
+                ),
+            ]
+        )
+
     risk_metadata_path = root / "reports/risk_fusion_v1/run_metadata.json"
     if risk_metadata_path.is_file():
         risk = read_json(risk_metadata_path)
@@ -297,6 +325,27 @@ def verify_local_artifacts(
                 ("policy", "enable_honeypot_handoff"),
                 False,
                 "honeypot-handoff-disabled",
+            ),
+            verify_json_value(
+                root,
+                "configs/deployment/api.json",
+                ("models", "base_detector_path"),
+                "artifacts/models/mixed_source_candidate_v2/selected_detector.joblib",
+                "api-loads-calibrated-candidate",
+            ),
+            verify_json_value(
+                root,
+                "configs/deployment/api.json",
+                ("policy", "allow_research_fusion"),
+                False,
+                "research-fusion-disabled",
+            ),
+            verify_json_value(
+                root,
+                "reports/external_text_v1/metrics.json",
+                ("threshold_was_frozen",),
+                True,
+                "external-threshold-frozen",
             ),
         ]
     )

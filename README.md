@@ -19,8 +19,10 @@ This repository is an implemented research prototype, not a production detector.
 | Whisper ASR | Local multilingual Whisper-tiny works end to end; Hindi/Hinglish backend selection remains gated | `reports/asr_smoke_v1` |
 | Entity extraction | Local deterministic extraction with sensitive-value redaction by default | `src/arrestshield/entities.py` |
 | Inference API | Text/audio routes, research status, redaction, and honeypot boundary implemented | `docs/INFERENCE_API.md` |
-| Mixed-source detector | Corrects the source shortcut: held-out Hinglish ROC-AUC 0.550 to 0.756 across three seeds | `reports/mixed_source_v1` |
-| Unseen-English false positives | 18.51% FPR on 13,071 banking conversations; 5.06% aggregate over 48,216 | `reports/unseen_english_v1` |
+| Mixed-source detector v1 | Historical source-shortcut correction: held-out Hinglish ROC-AUC 0.550 to 0.756 across three seeds | `reports/mixed_source_v1` |
+| Calibrated mixed-source candidate | Character TF-IDF + SGD + Platt; held-out Hinglish ROC-AUC 0.815 ± 0.023, one threshold across seeds | `reports/mixed_source_candidate_v2` |
+| Frozen external scam-call check | Recall improves from 3/243 to 15/243, but 93.8% of unseen English scam calls remain undetected | `reports/external_text_v1` |
+| Historical unseen-English audit | Old detector: 18.51% Banking77 FPR and 5.06% aggregate FPR over 48,216 conversations | `reports/unseen_english_v1` |
 | LLM honeypot | Signed handoff, default-deny gate, live engagement verified; blocked from live mode by policy | `docs/HONEYPOT.md` |
 | Human-gold promotion set | Not collected: 0 of 150 required conversations | `data/human_test/COLLECTION_STATUS.json` |
 | Audio validation set | Not collected; no backend is promoted from one English smoke clip | `data/audio_validation/COLLECTION_STATUS.json` |
@@ -31,7 +33,9 @@ The ordinary mixed-source split produces very high scores, including 98.43% supp
 
 The canonical build retains 49,950 negative and 2,256 positive conversations after deduplication. All 2,256 positives are source-silver; no positive conversation is human-gold. The negative pool is dominated by Banking77, DailyDialog, and Schema-Guided Dialogue. This imbalance is documented rather than hidden.
 
-Two consequences of that imbalance are measured rather than assumed. First, because those three corpora contain no scam examples, source identity was close to a perfect label; restricting training to sources holding both labels raises held-out Hinglish ROC-AUC from 0.550 to 0.756 while discarding 94% of the training data. Second, the detector has learned that financial vocabulary is itself suspicious: on 48,216 unseen English conversations it flags 18.51% of Banking77 against 0.15% of DailyDialog, a failure the 5.06% aggregate conceals.
+Two consequences of that imbalance are measured rather than assumed. First, because those three corpora contain no scam examples, source identity was close to a perfect label; restricting training to sources holding both labels and selecting character features raises held-out Hinglish ROC-AUC from 0.550 to 0.815 ± 0.023. Second, the old detector learned that financial vocabulary was itself suspicious: on 48,216 unseen English conversations it flagged 18.51% of Banking77. The new threshold is selected on a disjoint validation view with a per-source 5% gate and produces 4.54% Banking77 FPR on its test split, but this is not an unseen-source claim because Banking77 validation rows participate in threshold selection.
+
+The frozen external YouTube source exposes the remaining gap. The old served detector found 3 of 243 scam calls; the calibrated candidate finds 15 of 243. That five-fold relative improvement is still only 6.17% recall, so deployment and live honeypot routing remain blocked.
 
 `indian_cyber_scam_phonecall_hinglish` ships 10,000 rows of which 9,257 are exact duplicates, leaving 743 unique conversations (633 scam, 110 legitimate). The Source counts table in `docs/datasets/CANONICAL_BUILD_REPORT.md` is labelled input-before-deduplication for this reason. Only 21 legitimate Hinglish conversations reach the held-out test view, so no Hinglish false-positive rate in this project is a measurable quantity.
 
@@ -54,7 +58,7 @@ FFmpeg/ffprobe must be available on `PATH` for audio transcription.
 Run commands from the repository root in this order:
 
 ```powershell
-.venv\Scripts\python.exe scripts\download_datasets.py
+.venv\Scripts\python.exe scripts\download_datasets.py --registry data\manifests\dataset_registry.json
 .venv\Scripts\python.exe scripts\profile_raw_datasets.py
 .venv\Scripts\python.exe scripts\build_canonical_dataset.py
 .venv\Scripts\python.exe scripts\validate_processed_data.py
@@ -65,6 +69,10 @@ Run commands from the repository root in this order:
 .venv\Scripts\python.exe scripts\train_risk_fusion.py
 .venv\Scripts\python.exe scripts\evaluate_risk_fusion_loso.py
 .venv\Scripts\python.exe scripts\train_classical_multitask.py
+.venv\Scripts\python.exe scripts\train_mixed_source_candidate.py
+.venv\Scripts\python.exe scripts\download_datasets.py --registry data\manifests\dataset_registry.json --dataset youtube_scam_phone_call_transcripts
+.venv\Scripts\python.exe scripts\prepare_external_evaluation.py
+.venv\Scripts\python.exe scripts\evaluate_external_text.py
 ```
 
 The laptop deployment uses the completed compact classical multi-task artifact. Optional transformer comparison training remains available through `scripts/train_multitask_transformer.py`; it automatically resumes from a trainable-state-only checkpoint, but a GPU is recommended.
@@ -87,7 +95,7 @@ The independent human set can be frozen only after consent, redaction, two annot
 .venv\Scripts\python.exe scripts\run_api.py
 ```
 
-The service binds to `127.0.0.1:8000`; OpenAPI documentation is at `http://127.0.0.1:8000/docs`. The checked-in policy is `research_only_not_promoted`, permits use of the research fusion artifact for local experiments, and disables honeypot handoff. Sensitive entities are redacted unless a trusted caller explicitly opts in.
+The service binds to `127.0.0.1:8000`; OpenAPI documentation is at `http://127.0.0.1:8000/docs`. The checked-in policy loads the calibrated mixed-source candidate, marks it `research_only_not_promoted`, disables the failed research-fusion override, and disables honeypot handoff. Sensitive entities are redacted unless a trusted caller explicitly opts in.
 
 The container definition in `deploy/Dockerfile` runs as a non-root user, uses offline model loading, and expects model artifacts to be mounted read-only. It is not intended for direct Internet exposure.
 

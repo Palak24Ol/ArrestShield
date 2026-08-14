@@ -63,6 +63,8 @@ class DetectorEngine:
                 "family": self.base_bundle.get("model_family"),
                 "seed": self.base_bundle.get("seed"),
                 "threshold": self.base_bundle.get("threshold"),
+                "calibration": self.base_bundle.get("calibration_method", "none"),
+                "feature_variant": self.base_bundle.get("feature_variant", "word_char"),
             },
             "risk_fusion": {
                 "loaded": fusion is not None,
@@ -159,6 +161,8 @@ class DetectorEngine:
                 "threshold": base_threshold,
                 "family": self.base_bundle.get("model_family"),
                 "seed": self.base_bundle.get("seed"),
+                "calibration": self.base_bundle.get("calibration_method", "none"),
+                "feature_variant": self.base_bundle.get("feature_variant", "word_char"),
             },
             "risk_fusion": fusion_payload,
             "auxiliary_signals": auxiliary,

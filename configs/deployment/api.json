@@ -7,7 +7,7 @@
     "port": 8000
   },
   "models": {
-    "base_detector_path": "artifacts/models/model_ladder_v1/selected_detector.joblib",
+    "base_detector_path": "artifacts/models/mixed_source_candidate_v2/selected_detector.joblib",
     "risk_fusion_path": "artifacts/models/risk_fusion_v1/risk_fusion.joblib",
     "multitask_backend": "classical",
     "multitask_classical_path": "artifacts/models/classical_multitask_v1",
@@ -17,7 +17,7 @@
   },
   "policy": {
     "detector_status": "research_only_not_promoted",
-    "allow_research_fusion": true,
+    "allow_research_fusion": false,
     "enable_honeypot_handoff": false,
     "maximum_turns": 100,
     "maximum_characters": 50000

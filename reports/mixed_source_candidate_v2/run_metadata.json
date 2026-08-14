@@ -1,0 +1,13 @@
+{
+  "schema_version": "2.0.0",
+  "created_at_utc": "2026-08-14T18:39:22.188135+00:00",
+  "git_revision": "3a5f741517d6b0613cf7e0528e5ce3ebc63fde67",
+  "artifact_sha256": "742e53f8f657fcadfad5392136e99964938883147bcd1036080249d94eed6eca",
+  "artifact_bytes": 596046,
+  "model_family": "sgd_mixed_source_calibrated",
+  "feature_variant": "char",
+  "calibration_method": "platt",
+  "shared_threshold": 0.03491485949946002,
+  "deployment_seed": 42,
+  "promotion_status": "research_only_not_promoted"
+}

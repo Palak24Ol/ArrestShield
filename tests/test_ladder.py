@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import sys
 import unittest
 
@@ -10,6 +11,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 from arrestshield.data import ConversationExample  # noqa: E402
 from arrestshield.ladder import (  # noqa: E402
+    build_feature_union,
     build_prefix_batch,
     choose_family,
     stable_latency_from_flat_scores,
@@ -17,6 +19,21 @@ from arrestshield.ladder import (  # noqa: E402
 
 
 class LadderTests(unittest.TestCase):
+    def test_feature_union_supports_predeclared_ablation_groups(self) -> None:
+        config = json.loads(
+            (PROJECT_ROOT / "configs/model/model_ladder.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            [name for name, _ in build_feature_union(config, ["word"]).transformer_list],
+            ["word"],
+        )
+        self.assertEqual(
+            [name for name, _ in build_feature_union(config, ["char"]).transformer_list],
+            ["char"],
+        )
+        with self.assertRaisesRegex(ValueError, "enabled_groups"):
+            build_feature_union(config, ["invalid"])
+
     def test_choose_family_uses_latency_inside_variance_band(self) -> None:
         aggregates = {
             "sgd": {

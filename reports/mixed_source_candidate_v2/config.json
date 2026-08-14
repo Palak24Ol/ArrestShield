@@ -2,7 +2,11 @@
   "schema_version": "1.0.0",
   "run_id": "arrestshield-mixed-source-candidate-v2",
   "rationale": "Sources that contain only one label let the detector use source identity as a proxy for the label. Restricting training to sources that contain BOTH labels removes that shortcut by construction. Measured effect on held-out Hinglish ROC-AUC: 0.550 -> 0.756 across seeds 17/42/93.",
-  "seeds": [17, 42, 93],
+  "seeds": [
+    17,
+    42,
+    93
+  ],
   "deployment_seed": 42,
   "training_regime": {
     "mixed_label_sources_only": true,
@@ -13,11 +17,22 @@
   "candidate_selection": {
     "feature_selection_view": "training_partition_leave_one_source_out",
     "feature_variants": {
-      "word": ["word"],
-      "char": ["char"],
-      "word_char": ["word", "char"]
+      "word": [
+        "word"
+      ],
+      "char": [
+        "char"
+      ],
+      "word_char": [
+        "word",
+        "char"
+      ]
     },
-    "calibration_methods": ["none", "platt", "isotonic"],
+    "calibration_methods": [
+      "none",
+      "platt",
+      "isotonic"
+    ],
     "calibration_fraction": 0.5,
     "shared_threshold_across_seeds": true,
     "minimum_validation_negatives_per_source": 50,
@@ -25,10 +40,16 @@
     "deployment_status": "research_only_not_promoted"
   },
   "features": {
-    "word_ngram_range": [1, 2],
+    "word_ngram_range": [
+      1,
+      2
+    ],
     "word_min_df": 2,
     "word_max_features": 80000,
-    "char_ngram_range": [3, 5],
+    "char_ngram_range": [
+      3,
+      5
+    ],
     "char_min_df": 2,
     "char_max_features": 80000,
     "max_df": 0.995,
@@ -63,7 +84,10 @@
     "n_jobs": 4
   },
   "data": {
-    "allowed_label_provenance": ["source_gold", "source_silver"],
+    "allowed_label_provenance": [
+      "source_gold",
+      "source_silver"
+    ],
     "provenance_weights": {
       "source_gold": 1.0,
       "source_silver": 0.75,

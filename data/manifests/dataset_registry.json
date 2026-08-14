@@ -4,7 +4,7 @@
   "policy": {
     "raw_is_immutable": true,
     "split_unit": "conversation_id",
-    "automatic_download_statuses": ["approved"],
+    "automatic_download_statuses": ["approved", "approved_external_evaluation"],
     "notes": "Synthetic and message data are auxiliary. They must not be the sole frozen test set. No LLM-generated post-detection honeypot dialogue may be used as evidence for the detector decision."
   },
   "datasets": [
@@ -125,6 +125,80 @@
       ]
     },
     {
+      "id": "youtube_scam_phone_call_transcripts",
+      "source": "kaggle",
+      "repository": "rivalcults/youtube-scam-phone-call-transcripts",
+      "revision": "kaggle_version_1_audited_2026_08_14",
+      "license": "CC0-1.0",
+      "status": "approved_external_evaluation",
+      "role": ["external_evaluation_only", "real_scammer_speech", "english", "positive_only"],
+      "size_bytes": 294780,
+      "limitations": ["All 243 records are positive, so this source cannot measure false-positive rate or ROC-AUC alone.", "It is English rather than Hindi/Hinglish.", "Keep it out of training and threshold selection until a matched acquisition-channel negative corpus exists."],
+      "files": [
+        {"path": "dataset.zip", "url": "https://www.kaggle.com/api/v1/datasets/download/rivalcults/youtube-scam-phone-call-transcripts"}
+      ]
+    },
+    {
+      "id": "infobay_hindi_call_center_sample",
+      "source": "kaggle",
+      "repository": "infobayai/audio-call-center-hindi",
+      "revision": "kaggle_version_1_audited_2026_08_14",
+      "license": "CC-BY-4.0",
+      "status": "optional_audio_evaluation_manual_opt_in",
+      "role": ["audio_validation", "hindi", "legitimate_call_center", "hard_negative_candidate"],
+      "size_bytes": 100700784,
+      "limitations": ["The public archive is sample audio, not the claimed full collection.", "Reference transcripts and binary labels are not supplied and must be independently created before evaluation.", "Never download automatically because the user's laptop has a tight storage budget."],
+      "files": [
+        {"path": "dataset.zip", "url": "https://www.kaggle.com/api/v1/datasets/download/infobayai/audio-call-center-hindi"}
+      ]
+    },
+    {
+      "id": "hybrid_voice_phishing_core",
+      "source": "github",
+      "repository": "kishore2k05/Hybrid-Voice-Phishing-Detection-System",
+      "revision": "unpinned_until_license_permission",
+      "license": "UNSPECIFIED",
+      "status": "blocked_license_permission_required",
+      "role": ["future_mixed_label", "hinglish", "digital_arrest", "hard_negative"],
+      "size_samples": 1065,
+      "limitations": ["The repository declares 256 Hinglish and 56 digital-arrest rows but provides no explicit dataset license.", "Do not download, train on, or redistribute the CSV until the author grants written permission or adds a license.", "If permission is granted, exclude ambiguous label 1 from binary training and preserve original template/scenario groups."],
+      "files": []
+    },
+    {
+      "id": "kaggle_call_transcripts_scam_determinations",
+      "source": "kaggle",
+      "repository": "mealss/call-transcripts-scam-determinations",
+      "revision": "kaggle_version_1_audited_2026_08_14",
+      "license": "CC0-1.0",
+      "status": "rejected_synthetic_schema_mismatch",
+      "role": ["audit_record_only"],
+      "limitations": ["The publisher states that the corpus is synthetic.", "The archive inspected on 2026-08-14 contained 65 conversation IDs and inconsistent turn labels despite the card advertising 60 binary-labeled transcripts.", "It does not add real caller evidence to a corpus whose positive class is already mostly synthetic."],
+      "files": []
+    },
+    {
+      "id": "kaggle_fraud_call_india",
+      "source": "kaggle",
+      "repository": "narayanyadav/fraud-call-india-dataset",
+      "revision": "kaggle_version_1_audited_2026_08_14",
+      "license": "CC0-1.0",
+      "status": "rejected_wrong_modality_and_domain",
+      "role": ["audit_record_only"],
+      "limitations": ["The inspected file contains 5,927 mostly English SMS/chat lines rather than call transcripts.", "It includes UK prize-message patterns, no Devanagari rows, and 315 exact duplicate rows.", "The title alone is insufficient evidence of Indian call provenance."],
+      "files": []
+    },
+    {
+      "id": "teeconnie_scam_non_scam_calls",
+      "source": "kaggle",
+      "repository": "teeconnie/scam-and-non-scam-call-conversation-dataset",
+      "revision": "kaggle_version_1_audited_2026_08_14",
+      "license": "CC-BY-NC-ND-4.0",
+      "status": "blocked_no_derivatives_external_evaluation_only",
+      "role": ["future_external_evaluation", "english", "mixed_label", "synthetic_and_collected"],
+      "size_samples": 800,
+      "limitations": ["The corpus contains generated and placeholder-heavy text.", "NoDerivatives licensing makes training/derived-model use unsuitable without explicit permission.", "Do not commit or use for model fitting."],
+      "files": []
+    },
+    {
       "id": "indica_telecom_fraud_calls",
       "source": "huggingface",
       "repository": "vikrant-vikram/INDICA",
@@ -132,8 +206,8 @@
       "license": "UNSPECIFIED",
       "status": "blocked_license_and_size",
       "role": ["future_audio", "future_indic_fraud_calls", "asr_robustness"],
-      "size_bytes": 378602886557,
-      "limitations": ["Dataset page/API does not state a license.", "Full repository is approximately 378.6 GB; Hindi audio alone is approximately 35.4 GB.", "Do not use for training or download automatically until written license terms and a storage budget are approved."],
+      "size_bytes": 362000000000,
+      "limitations": ["Dataset page/API does not state a license.", "Full repository is approximately 362 GB and contains TeleAntiFraud-derived/TTS path provenance.", "Do not use for training or download automatically until written license terms and a storage budget are approved.", "If approved later, acquire only the Hindi text subset rather than the audio repository."],
       "files": []
     },
     {
@@ -175,11 +249,11 @@
       "source": "huggingface_and_github",
       "repository": "JimmyMa99/TeleAntiFraud",
       "revision": "2026_04_sanitized_release",
-      "license": "VERIFY_DATASET_CARD",
-      "status": "blocked_language_license_and_storage_review",
+      "license": "Apache-2.0",
+      "status": "blocked_gated_language_and_storage_review",
       "role": ["audio_text_methodology", "fraud_detection", "fraud_type", "scenario_classification", "asr_structure_reference"],
       "size_samples": 28511,
-      "limitations": ["Chinese-language corpus; it cannot directly validate Hindi or Hinglish detection.", "Contains privacy-preserved TTS, semantic enhancement, and multi-agent synthetic samples.", "Verify dataset-card license and archive sizes before acquisition.", "Use its three-task structure as methodology, not as the primary ArrestShield test set."],
+      "limitations": ["Chinese-language corpus; it cannot directly validate Hindi or Hinglish detection.", "Contains privacy-preserved TTS, semantic enhancement, and multi-agent synthetic samples.", "Hugging Face access is gated even though the dataset card declares Apache-2.0.", "Use its three-task structure as methodology, not as the primary ArrestShield test set."],
       "files": []
     },
     {

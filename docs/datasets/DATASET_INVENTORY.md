@@ -13,6 +13,11 @@ The approved seed bundle contains:
    travel, and support conversations.
 7. Small gold HINMIX romanized/noisy Hinglish sets for language robustness.
 
+An additional CC0 YouTube scam-call transcript corpus is approved for
+**external evaluation only**. It is downloaded only when explicitly selected,
+deduplicated into a separate manifest, and cannot enter canonical training,
+calibration, threshold selection, or model selection.
+
 Every source is pinned to an immutable revision. Source payloads are stored
 unchanged below `data/raw/<dataset_id>/`; a download receipt records the URL,
 SHA-256, byte count, timestamp, license, and revision.
@@ -27,6 +32,14 @@ SHA-256, byte count, timestamp, license, and revision.
   record/download terms must be verified separately from the article license.
 - **Full HINMIX training corpus:** approximately 2.45 GB and not scam-labelled;
   only the small gold/robustness splits are required at this stage.
+- **InfoBay Hindi call-centre speech:** optionally downloadable after explicit
+  selection; useful for ASR/domain robustness, but not labelled for scams and
+  therefore not detector supervision.
+- **Hybrid voice-phishing and TEEConnie call data:** tracked but blocked until
+  redistribution and usage terms are clear.
+- **Kaggle call-determination/fraud-call tables:** rejected as primary detector
+  data when their modality, label meaning, or synthetic provenance does not
+  match live scammer speech.
 
 ## Critical gap
 

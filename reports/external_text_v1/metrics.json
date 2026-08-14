@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "arrestshield-external-text-v1",
+  "created_at_utc": "2026-08-14T18:40:39.989946+00:00",
+  "git_revision": "3a5f741517d6b0613cf7e0528e5ce3ebc63fde67",
+  "manifest": "C:\\ArrestShield\\data\\interim\\external_evaluation\\youtube_scam_calls.jsonl",
+  "detector": "C:\\ArrestShield\\artifacts\\models\\mixed_source_candidate_v2\\selected_detector.joblib",
+  "protocol": "external_evaluation_only_no_training_or_threshold_selection",
+  "examples": 243,
+  "languages": [
+    "english"
+  ],
+  "source_groups": [
+    "youtube_scam_phone_call_transcripts"
+  ],
+  "metrics": {
+    "examples": 243,
+    "positive_examples": 243,
+    "threshold": 0.03491485949946002,
+    "accuracy": 0.06172839506172839,
+    "balanced_accuracy": null,
+    "precision": 1.0,
+    "recall": 0.06172839506172839,
+    "specificity": 0.0,
+    "false_positive_rate": 0.0,
+    "f1": 0.11627906976744186,
+    "macro_f1": 0.05813953488372093,
+    "f2": 0.07598784194528875,
+    "matthews_correlation": null,
+    "brier_score": 0.9703000176950796,
+    "confusion_matrix": {
+      "tn": 0,
+      "fp": 0,
+      "fn": 228,
+      "tp": 15
+    },
+    "roc_auc": null,
+    "pr_auc": null
+  },
+  "by_source": {
+    "youtube_scam_phone_call_transcripts": {
+      "examples": 243,
+      "positive_examples": 243,
+      "threshold": 0.03491485949946002,
+      "accuracy": 0.06172839506172839,
+      "balanced_accuracy": null,
+      "precision": 1.0,
+      "recall": 0.06172839506172839,
+      "specificity": 0.0,
+      "false_positive_rate": 0.0,
+      "f1": 0.11627906976744186,
+      "macro_f1": 0.05813953488372093,
+      "f2": 0.07598784194528875,
+      "matthews_correlation": null,
+      "brier_score": 0.9703000176950796,
+      "confusion_matrix": {
+        "tn": 0,
+        "fp": 0,
+        "fn": 228,
+        "tp": 15
+      },
+      "roc_auc": null,
+      "pr_auc": null
+    }
+  },
+  "score_distribution": {
+    "minimum": 4.211527036458382e-07,
+    "p25": 2.8093776864261048e-05,
+    "median": 0.00023437483822710275,
+    "p75": 0.0020503144772052455,
+    "maximum": 0.7669748283225123
+  },
+  "threshold_was_frozen": true,
+  "llm_used_for_detection": false
+}

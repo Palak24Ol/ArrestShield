@@ -56,6 +56,11 @@ def main() -> int:
     parser.add_argument("--registry", type=Path, required=True)
     parser.add_argument("--root", type=Path, default=None)
     parser.add_argument("--dataset", action="append", default=[])
+    parser.add_argument(
+        "--include-optional",
+        action="store_true",
+        help="Allow an explicitly selected optional_* dataset; never affects blocked/rejected sources.",
+    )
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
 
@@ -74,7 +79,13 @@ def main() -> int:
         dataset_id = dataset["id"]
         if selected and dataset_id not in selected:
             continue
-        if dataset["status"] not in registry["policy"]["automatic_download_statuses"]:
+        status = str(dataset["status"])
+        optional_allowed = bool(
+            args.include_optional
+            and dataset_id in selected
+            and status.startswith("optional_")
+        )
+        if status not in registry["policy"]["automatic_download_statuses"] and not optional_allowed:
             skipped.append({"dataset_id": dataset_id, "status": dataset["status"]})
             continue
         for item in dataset.get("files", []):
@@ -104,6 +115,19 @@ def main() -> int:
                 print(f"[failed] {dataset_id}/{item['path']}: {exc}", file=sys.stderr)
 
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    if selected and manifest_path.exists():
+        existing: list[dict] = []
+        with manifest_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    existing.append(json.loads(line))
+        merged = {
+            (str(receipt.get("dataset_id")), str(receipt.get("relative_path"))): receipt
+            for receipt in existing
+        }
+        for receipt in receipts:
+            merged[(receipt["dataset_id"], receipt["relative_path"])] = receipt
+        receipts = [merged[key] for key in sorted(merged)]
     with manifest_path.open("w", encoding="utf-8") as handle:
         for receipt in receipts:
             handle.write(json.dumps(receipt, ensure_ascii=False) + "\n")

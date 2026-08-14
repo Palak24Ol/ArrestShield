@@ -100,7 +100,11 @@ def frozen_detector_scores(bundle: Mapping[str, Any], texts: Sequence[str]) -> n
     classes = list(model.classes_)
     if 1 not in classes:
         raise ValueError("Detector model has no positive class 1")
-    return np.asarray(probabilities[:, classes.index(1)], dtype=np.float64)
+    scores = np.asarray(probabilities[:, classes.index(1)], dtype=np.float64)
+    calibrator = bundle.get("calibrator")
+    if calibrator is not None:
+        scores = np.asarray(calibrator.predict(scores), dtype=np.float64)
+    return scores
 
 
 def evaluate_backend_outputs(

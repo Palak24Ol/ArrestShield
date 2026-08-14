@@ -16,6 +16,25 @@ Tests use small deterministic fixtures and mocked models for logic. Real-artifac
 6. Treat test metrics as supporting-only after model family/checkpoint selection.
 7. Require the independent frozen human-gold set before promotion.
 
+The current calibrated candidate additionally enforces these mechanics:
+
+- Feature families are compared with leave-one-mixed-source-out ROC-AUC inside
+  the training partition only; neither validation nor test rows select features.
+- Validation rows are divided into disjoint calibration and threshold views
+  within each source/label stratum.
+- A single threshold must satisfy the 5% FPR limit for every eligible negative
+  validation source and every seed.
+- External-evaluation records are schema-checked and forbidden from training,
+  calibration, threshold selection, or model-family selection.
+
+Reproduce the candidate and frozen external audit with:
+
+```powershell
+.venv\Scripts\python.exe scripts\train_mixed_source_candidate.py
+.venv\Scripts\python.exe scripts\prepare_external_evaluation.py
+.venv\Scripts\python.exe scripts\evaluate_external_text.py
+```
+
 ## Pre-registered ablations
 
 Ablations use the same conversation splits, seeds, training budget, hard-negative threshold rule, and supporting test policy as the full model. They are diagnostics, not alternative selection metrics. Report validation recall/FPR, macro-F1, stable scammer-turn latency, and mean plus standard deviation; do not select whichever ablation happens to have the best test result.

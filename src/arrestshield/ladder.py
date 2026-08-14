@@ -16,10 +16,16 @@ from .data import ConversationExample
 from .protocol import stable_detection_turn, summarize_stable_detection
 
 
-def build_feature_union(config: Mapping[str, Any]) -> FeatureUnion:
+def build_feature_union(
+    config: Mapping[str, Any], enabled_groups: Sequence[str] | None = None
+) -> FeatureUnion:
     features = config["features"]
-    return FeatureUnion(
-        [
+    groups = tuple(enabled_groups or ("word", "char"))
+    if not groups or set(groups) - {"word", "char"}:
+        raise ValueError("enabled_groups must contain word, char, or both")
+    transformers: list[tuple[str, TfidfVectorizer]] = []
+    if "word" in groups:
+        transformers.append(
             (
                 "word",
                 TfidfVectorizer(
@@ -33,7 +39,10 @@ def build_feature_union(config: Mapping[str, Any]) -> FeatureUnion:
                     sublinear_tf=bool(features["sublinear_tf"]),
                     dtype=np.float32,
                 ),
-            ),
+            )
+        )
+    if "char" in groups:
+        transformers.append(
             (
                 "char",
                 TfidfVectorizer(
@@ -47,9 +56,9 @@ def build_feature_union(config: Mapping[str, Any]) -> FeatureUnion:
                     sublinear_tf=bool(features["sublinear_tf"]),
                     dtype=np.float32,
                 ),
-            ),
-        ]
-    )
+            )
+        )
+    return FeatureUnion(transformers)
 
 
 def build_svd(config: Mapping[str, Any]) -> TruncatedSVD:
