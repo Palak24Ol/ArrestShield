@@ -1,0 +1,6 @@
+{
+  "model_path": "models/selected_detector.joblib",
+  "whisper_local_path": "../artifacts/pretrained/openai-whisper-tiny",
+  "groq_model": "llama-3.3-70b-versatile",
+  "decision_boundary": "Only the trained binary ML model decides SCAM or NOT_SCAM. Whisper only transcribes. The LLM runs only after SCAM."
+}

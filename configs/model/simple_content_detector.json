@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "arrestshield-simple-content-detector-v1",
+  "objective": "Binary scam/not-scam classification from transcript content only",
+  "feature_groups": ["word", "char"],
+  "seeds": [17, 42, 93],
+  "deployment_seed": 42,
+  "external_adaptation": {
+    "manifest": "data/interim/external_evaluation/youtube_scam_calls.jsonl",
+    "train_fraction": 0.70,
+    "validation_fraction": 0.15,
+    "previously_inspected_source": true,
+    "test_status": "adaptation_holdout_not_pristine_external_benchmark"
+  },
+  "project_authored_examples": "major_project/data/project_authored_training.jsonl",
+  "features": {
+    "word_ngram_range": [1, 2],
+    "word_min_df": 2,
+    "word_max_features": 80000,
+    "char_ngram_range": [3, 5],
+    "char_min_df": 2,
+    "char_max_features": 100000,
+    "max_df": 0.995,
+    "sublinear_tf": true
+  },
+  "sgd": {
+    "loss": "log_loss",
+    "penalty": "elasticnet",
+    "alpha": 0.00001,
+    "l1_ratio": 0.05,
+    "max_iter": 1500,
+    "tolerance": 0.0001,
+    "class_weight": null,
+    "average": true
+  },
+  "data": {
+    "allowed_label_provenance": ["source_gold", "source_silver", "project_authored_silver"],
+    "provenance_weights": {
+      "source_gold": 1.0,
+      "source_silver": 0.75,
+      "project_authored_silver": 1.0
+    }
+  },
+  "evaluation": {
+    "maximum_false_positive_rate": 0.05,
+    "minimum_validation_negatives_per_source": 50,
+    "exit_threshold_ratio": 0.85
+  },
+  "deployment_status": "research_only_demo"
+}

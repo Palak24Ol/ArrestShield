@@ -23,6 +23,7 @@ class ExternalTextRecord:
     source_group: str
     rights_basis: str
     pii_redacted: bool
+    source_url: str = ""
 
 
 def load_external_text_manifest(path: Path) -> list[ExternalTextRecord]:
@@ -63,6 +64,7 @@ def load_external_text_manifest(path: Path) -> list[ExternalTextRecord]:
                     source_group=fields["source_group"],
                     rights_basis=fields["rights_basis"],
                     pii_redacted=True,
+                    source_url=str(payload.get("source_url") or "").strip(),
                 )
             )
     if not records:

@@ -1,0 +1,22 @@
+[
+  {"id":"test-scam-01","expected":"scam","language":"hinglish","text":"Cyber crime officer bol raha hoon. Aapka Aadhaar drugs parcel se link hua hai. Call mat kaatna aur verification account me funds bhejna."},
+  {"id":"test-scam-02","expected":"scam","language":"english","text":"Your online order is fraudulent. Tell me the verification code now so I can cancel it."},
+  {"id":"test-scam-03","expected":"scam","language":"hinglish","text":"KYC block hone se bachane ke liye screen sharing app install karke OTP batana padega."},
+  {"id":"test-scam-04","expected":"scam","language":"english","text":"The tax department has issued an arrest warrant. Buy gift cards today to settle the case."},
+  {"id":"test-scam-05","expected":"scam","language":"hinglish","text":"Aap lottery jeet gaye hain, prize release karne ke liye pehle processing charge UPI par pay karo."},
+  {"id":"test-scam-06","expected":"scam","language":"english","text":"I can fix the virus and return your money after you install remote desktop software."},
+  {"id":"test-scam-07","expected":"scam","language":"hinglish","text":"Electricity connection aadhe ghante me cut hoga, isi payment link se turant bill jama karo."},
+  {"id":"test-scam-08","expected":"scam","language":"english","text":"Move your savings into our secure reserve account while investigators verify your identity."},
+  {"id":"test-scam-09","expected":"scam","language":"hinglish","text":"Family ko mat batana, ye confidential police inquiry hai aur video call band nahi karna."},
+  {"id":"test-scam-10","expected":"scam","language":"english","text":"Your loan is approved; send the advance insurance fee before we release the funds."},
+  {"id":"test-legit-01","expected":"not_scam","language":"english","text":"Never disclose an OTP to a caller. Use only the official banking application."},
+  {"id":"test-legit-02","expected":"not_scam","language":"hinglish","text":"Kal police station me passport appointment hai, bas documents lekar aana koi online fee nahi hai."},
+  {"id":"test-legit-03","expected":"not_scam","language":"english","text":"Your package will arrive on Friday and the delivery fee was already paid."},
+  {"id":"test-legit-04","expected":"not_scam","language":"hinglish","text":"Papa main office se nikal gaya hoon aur aath baje ghar pahunchunga."},
+  {"id":"test-legit-05","expected":"not_scam","language":"english","text":"This is a fraud awareness seminar about fake arrest and investment calls."},
+  {"id":"test-legit-06","expected":"not_scam","language":"english","text":"The bank has posted your statement. Contact the branch using its official website if you have questions."},
+  {"id":"test-legit-07","expected":"not_scam","language":"hinglish","text":"KYC ke liye branch visit kariye aur kisi caller ko password ya OTP bilkul mat batana."},
+  {"id":"test-legit-08","expected":"not_scam","language":"english","text":"Your electricity payment succeeded. No further action is necessary."},
+  {"id":"test-legit-09","expected":"not_scam","language":"english","text":"The interview link is in your email and the company never charges candidates a fee."},
+  {"id":"test-legit-10","expected":"not_scam","language":"hinglish","text":"Aaj ki meeting postpone ho gayi hai, naya time kal confirm karenge."}
+]

@@ -1,5 +1,9 @@
 # ArrestShield ML
 
+For the clean binary detector + Whisper + LLM honeypot professor demo, start in
+`major_project/`. The rest of this repository preserves the broader research,
+dataset, and ablation work.
+
 ArrestShield is a multilingual research pipeline for detecting digital-arrest and related phone scams from English, Hindi, and Hinglish conversations. It includes versioned dataset ingestion, conversation-level splitting, classical and transformer detectors, local Whisper transcription, threat-entity extraction, XGBoost risk fusion, evaluation gates, and a local FastAPI inference service.
 
 The scam decision is made only by trained ML models and frozen policy thresholds. The LLM-powered fake-victim honeypot is a separate downstream system. It is never used to label training data, calculate risk, choose a threshold, or decide whether a conversation is a scam.

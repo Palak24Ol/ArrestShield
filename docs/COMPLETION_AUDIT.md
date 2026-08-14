@@ -9,6 +9,7 @@ This audit records the evidence for the completed local research implementation.
 | Leakage-resistant splitting | Processed validation report, split manifest hash, grouped-split tests | Conversation/group leakage is zero; source shortcuts are evaluated separately |
 | Binary and XGBoost baselines | `reports/baseline_v1`, `reports/model_ladder_v1` | SGD and SVD-XGBoost trained with seeds 17, 42, and 93 |
 | Calibrated mixed-source candidate | `reports/mixed_source_candidate_v2` | Character features selected by source holdout; Platt scaling and one three-seed threshold fitted on disjoint validation views |
+| Simple professor-demo detector | `major_project`, `reports/simple_content_detector_v1` | Packaged binary model scores 18/20 on the fixed behavioral suite and gates the LLM honeypot |
 | Frozen external audit | `reports/external_text_v1` | 15/243 scam calls detected (6.17% recall); promotion remains blocked |
 | Rigorous source evaluation | `reports/model_ladder_v1/loso_metrics.json`, `reports/risk_fusion_v1/loso_metrics.json` | Strict 5% FPR gate fails and promotion remains blocked; high mixed-source scores are not presented as real-world accuracy |
 | Multilingual multi-task detection | `reports/classical_multitask_v1`, reconstructable local artifact | Three-seed XGBoost heads trained for scam type, stage, and nine supported tactics; unsupported labels return unavailable |
@@ -19,8 +20,8 @@ This audit records the evidence for the completed local research implementation.
 | Whisper audio-to-text | ASR adapter/tests, model manifest hashes, `reports/integration_v1/runtime_smoke.json` | Real local FLAC request transcribed and temporary upload deleted; Hindi/Hinglish backend promotion remains blocked pending data |
 | Entity extraction and privacy | Entity module/tests and real text smoke | Operational entities extracted; sensitive values redacted by default |
 | Inference API | API contract/tests and runtime smoke | Text/audio/model/health paths work with actual artifacts; configured auxiliary backend is disclosed |
-| Artifact integrity | `reports/verification_v1/verification.json` | 34 of 34 checksum, status, and boundary checks passed with no skips |
-| Automated testing | Full local pytest run on 2026-08-15 | 98 tests passed |
+| Artifact integrity | `reports/verification_v1/verification.json` | 37 of 37 checksum, status, and boundary checks passed with no skips |
+| Automated testing | Full local pytest run on 2026-08-15 | 101 repository tests and 2 packaged-project tests passed |
 | Deployment packaging | Localhost policy, non-root container definition, offline model paths | Implemented as a local research service, not an Internet-ready production service |
 | LLM/honeypot separation | Config, manifests, verifier, API responses and tests | LLM use for detection is false; auxiliary heads cannot decide `is_scam`; honeypot handoff is disabled |
 | Reproducibility and documentation | Configs, scripts, reports, architecture/API/testing docs | Commands, seeds, thresholds, hashes, limitations, folder layout, and decision boundary are documented |

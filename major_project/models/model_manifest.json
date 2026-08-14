@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "file": "selected_detector.joblib",
+  "sha256": "8b1b0f20d640390be70428822282fcf2ad5d6672689ecb1d29e5c375fd649b06",
+  "bytes": 3150625,
+  "model_family": "simple_transcript_content_sgd",
+  "features": "word_1_2_grams_plus_character_3_5_grams_tfidf",
+  "classifier": "sgd_logistic_loss",
+  "deployment_seed": 42,
+  "threshold": 0.0006237220368348063,
+  "behavioral_accuracy": 0.9,
+  "behavioral_scam_recall": 1.0,
+  "llm_used_for_detection": false,
+  "status": "academic_demo_not_production"
+}

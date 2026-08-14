@@ -1,0 +1,40 @@
+{"id":"scam-train-01","label":1,"split":"train","language":"hinglish","text":"Main CBI cyber cell se bol raha hoon, aapke Aadhaar par money laundering case hai, kisi ko mat batana aur safe account me paisa transfer karo."}
+{"id":"scam-train-02","label":1,"split":"train","language":"hinglish","text":"Aapka KYC aaj expire ho raha hai, abhi OTP bataiye warna bank account block kar diya jayega."}
+{"id":"scam-train-03","label":1,"split":"train","language":"english","text":"There is an unauthorized Amazon purchase on your account, press one and share the verification code immediately."}
+{"id":"scam-train-04","label":1,"split":"train","language":"english","text":"I am calling from Microsoft support, install AnyDesk now so I can remove the virus and process your refund."}
+{"id":"scam-train-05","label":1,"split":"train","language":"hinglish","text":"FedEx parcel me drugs mile hain, customs case cancel karne ke liye penalty UPI se pay karo."}
+{"id":"scam-train-06","label":1,"split":"train","language":"english","text":"Your electricity will be disconnected tonight unless you pay the pending bill through this link now."}
+{"id":"scam-train-07","label":1,"split":"train","language":"english","text":"This investment gives guaranteed daily returns, deposit today before the offer expires."}
+{"id":"scam-train-08","label":1,"split":"train","language":"hinglish","text":"Loan approve ho gaya hai, disbursement se pehle processing fee mere QR code par bhejiye."}
+{"id":"scam-train-09","label":1,"split":"train","language":"english","text":"Read out your card number CVV and the OTP so I can reverse the fraudulent transaction."}
+{"id":"scam-train-10","label":1,"split":"train","language":"hinglish","text":"SIM band hone wali hai, verification ke liye Aadhaar number aur OTP abhi share karo."}
+{"id":"scam-train-11","label":1,"split":"train","language":"english","text":"You won a cash prize, pay the tax with gift cards before we release your winnings."}
+{"id":"scam-train-12","label":1,"split":"train","language":"hinglish","text":"Police verification video call par hoga, phone disconnect mat karna aur family ko kuch mat batana."}
+{"id":"scam-train-13","label":1,"split":"train","language":"english","text":"Scan this QR code to receive your refund and enter your UPI PIN when prompted."}
+{"id":"scam-train-14","label":1,"split":"train","language":"hinglish","text":"Job confirm hai lekin joining letter ke liye registration fee turant jama karni hogi."}
+{"id":"scam-train-15","label":1,"split":"train","language":"english","text":"Your bank account is under investigation, move all funds to the RBI security account for verification."}
+{"id":"legit-train-01","label":0,"split":"train","language":"english","text":"Security reminder from your bank: never share your OTP PIN CVV or password with anyone."}
+{"id":"legit-train-02","label":0,"split":"train","language":"english","text":"Your courier is scheduled for delivery tomorrow and no payment is required."}
+{"id":"legit-train-03","label":0,"split":"train","language":"hinglish","text":"Passport verification ke liye police station me original documents lekar aaiye, phone par koi payment nahi deni hai."}
+{"id":"legit-train-04","label":0,"split":"train","language":"english","text":"Hi mom, I will reach home at seven, please keep dinner ready."}
+{"id":"legit-train-05","label":0,"split":"train","language":"english","text":"Your Amazon package has shipped and can be tracked in the official app."}
+{"id":"legit-train-06","label":0,"split":"train","language":"english","text":"Our support staff will never request remote access or ask you to install an unknown application."}
+{"id":"legit-train-07","label":0,"split":"train","language":"hinglish","text":"Bank fraud awareness message: OTP kisi ke saath share na karein aur suspicious call disconnect kar dein."}
+{"id":"legit-train-08","label":0,"split":"train","language":"english","text":"The RBI does not ask customers to transfer money to a safe account; report such calls to the police."}
+{"id":"legit-train-09","label":0,"split":"train","language":"english","text":"Your monthly account statement is available in internet banking, no action is needed."}
+{"id":"legit-train-10","label":0,"split":"train","language":"hinglish","text":"KYC update ke liye nearest branch visit karein, phone par documents ya OTP share mat karein."}
+{"id":"legit-train-11","label":0,"split":"train","language":"english","text":"Your electricity bill payment was received successfully and your supply remains active."}
+{"id":"legit-train-12","label":0,"split":"train","language":"english","text":"Your job interview is confirmed for Monday and there is no application or registration fee."}
+{"id":"legit-train-13","label":0,"split":"train","language":"english","text":"Investments involve market risk and returns are never guaranteed."}
+{"id":"legit-train-14","label":0,"split":"train","language":"hinglish","text":"Aap galat number par call kar rahe hain, yahan koi Sharma ji nahi rehte."}
+{"id":"legit-train-15","label":0,"split":"train","language":"english","text":"The school parent meeting starts at ten tomorrow morning."}
+{"id":"scam-val-01","label":1,"split":"validation","language":"english","text":"A refund is waiting but I need your one time password and remote access before it can be credited."}
+{"id":"scam-val-02","label":1,"split":"validation","language":"hinglish","text":"Mumbai police se bol raha hoon, parcel case me digital arrest hai, video call chalu rakho aur paise verify karao."}
+{"id":"scam-val-03","label":1,"split":"validation","language":"english","text":"Your social security identity was used in a crime, stay on the line and purchase gift cards to avoid arrest."}
+{"id":"scam-val-04","label":1,"split":"validation","language":"hinglish","text":"Account freeze rokne ke liye abhi link kholo aur login password enter karo."}
+{"id":"scam-val-05","label":1,"split":"validation","language":"english","text":"Pay the customs clearance fee today or the illegal parcel will be reported in your name."}
+{"id":"legit-val-01","label":0,"split":"validation","language":"english","text":"We detected a card transaction; if it was not yours, call the number printed on the back of your card."}
+{"id":"legit-val-02","label":0,"split":"validation","language":"hinglish","text":"Police advisory: digital arrest scam se bachein, unknown caller ko paisa ya OTP kabhi na dein."}
+{"id":"legit-val-03","label":0,"split":"validation","language":"english","text":"Your refund has been credited automatically and we will never ask for a PIN to receive money."}
+{"id":"legit-val-04","label":0,"split":"validation","language":"english","text":"Hello, this is a reminder for your hospital appointment at four in the afternoon."}
+{"id":"legit-val-05","label":0,"split":"validation","language":"hinglish","text":"Courier office se bol rahe hain, parcel branch me ready hai aur collection ke samay normal receipt milegi."}

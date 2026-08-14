@@ -227,24 +227,31 @@ def parse_args() -> argparse.Namespace:
         "--output", type=Path,
         default=PROJECT_ROOT / "docs/ArrestShield_ML_Status_and_Testing_Guide.pdf",
     )
+    parser.add_argument("--title", default="ArrestShield ML Status")
+    parser.add_argument(
+        "--footer",
+        default="ArrestShield - research prototype - not production ready",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    if not args.source.exists():
-        raise SystemExit(f"Source not found: {args.source}")
-    markdown = args.source.read_text(encoding="utf-8")
+    source = args.source if args.source.is_absolute() else PROJECT_ROOT / args.source
+    output = args.output if args.output.is_absolute() else PROJECT_ROOT / args.output
+    if not source.exists():
+        raise SystemExit(f"Source not found: {source}")
+    markdown = source.read_text(encoding="utf-8")
     styles = build_styles()
 
     margin = 18 * mm
     available = A4[0] - 2 * margin
     document = SimpleDocTemplate(
-        str(args.output),
+        str(output),
         pagesize=A4,
         leftMargin=margin, rightMargin=margin,
         topMargin=16 * mm, bottomMargin=16 * mm,
-        title="ArrestShield ML Status",
+        title=args.title,
         author="ArrestShield",
         subject="Research prototype status and limitations",
     )
@@ -253,7 +260,7 @@ def main() -> int:
         canvas.saveState()
         canvas.setFont("Helvetica", 7.5)
         canvas.setFillColor(MUTED)
-        canvas.drawString(margin, 10 * mm, "ArrestShield - research prototype - not production ready")
+        canvas.drawString(margin, 10 * mm, args.footer)
         canvas.drawRightString(A4[0] - margin, 10 * mm, f"Page {canvas.getPageNumber()}")
         canvas.restoreState()
 
@@ -261,14 +268,14 @@ def main() -> int:
     story.insert(
         1,
         Paragraph(
-            f"Generated from {args.source.relative_to(PROJECT_ROOT).as_posix()}. "
+            f"Generated from {source.relative_to(PROJECT_ROOT).as_posix()}. "
             "Do not edit this PDF directly; edit the markdown and rebuild.",
             styles["subtitle"],
         ),
     )
     document.build(story, onFirstPage=furniture, onLaterPages=furniture)
-    size = args.output.stat().st_size
-    print(f"Wrote {args.output} ({size:,} bytes)")
+    size = output.stat().st_size
+    print(f"Wrote {output} ({size:,} bytes)")
     return 0
 
 

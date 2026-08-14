@@ -181,6 +181,33 @@ def verify_local_artifacts(
             ]
         )
 
+    simple_metadata_path = root / "reports/simple_content_detector_v1/run_metadata.json"
+    if simple_metadata_path.is_file():
+        simple = read_json(simple_metadata_path)
+        checks.extend(
+            [
+                verify_sha256(
+                    root,
+                    "artifacts/models/simple_content_detector_v1/selected_detector.joblib",
+                    str(simple["artifact_sha256"]),
+                    "simple-content-detector",
+                ),
+                verify_sha256(
+                    root,
+                    "major_project/models/selected_detector.joblib",
+                    str(simple["artifact_sha256"]),
+                    "packaged-simple-content-detector",
+                ),
+                verify_json_value(
+                    root,
+                    "major_project/reports/behavioral_evaluation.json",
+                    ("accuracy",),
+                    0.9,
+                    "major-project-behavioral-accuracy",
+                ),
+            ]
+        )
+
     risk_metadata_path = root / "reports/risk_fusion_v1/run_metadata.json"
     if risk_metadata_path.is_file():
         risk = read_json(risk_metadata_path)

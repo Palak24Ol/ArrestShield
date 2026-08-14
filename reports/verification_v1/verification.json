@@ -4,8 +4,8 @@
   "require_multitask": true,
   "status": "passed",
   "counts": {
-    "checks": 34,
-    "passed": 34,
+    "checks": 37,
+    "passed": 37,
     "failed": 0,
     "skipped": 0
   },
@@ -80,6 +80,30 @@
       "path": "reports/mixed_source_candidate_v2/metrics.json",
       "expected": false,
       "actual": false,
+      "detail": null
+    },
+    {
+      "name": "simple-content-detector",
+      "status": "passed",
+      "path": "artifacts/models/simple_content_detector_v1/selected_detector.joblib",
+      "expected": "8b1b0f20d640390be70428822282fcf2ad5d6672689ecb1d29e5c375fd649b06",
+      "actual": "8b1b0f20d640390be70428822282fcf2ad5d6672689ecb1d29e5c375fd649b06",
+      "detail": null
+    },
+    {
+      "name": "packaged-simple-content-detector",
+      "status": "passed",
+      "path": "major_project/models/selected_detector.joblib",
+      "expected": "8b1b0f20d640390be70428822282fcf2ad5d6672689ecb1d29e5c375fd649b06",
+      "actual": "8b1b0f20d640390be70428822282fcf2ad5d6672689ecb1d29e5c375fd649b06",
+      "detail": null
+    },
+    {
+      "name": "major-project-behavioral-accuracy",
+      "status": "passed",
+      "path": "major_project/reports/behavioral_evaluation.json",
+      "expected": 0.9,
+      "actual": 0.9,
       "detail": null
     },
     {
@@ -283,5 +307,5 @@
       "detail": null
     }
   ],
-  "created_at_utc": "2026-08-14T18:40:53.496651+00:00"
+  "created_at_utc": "2026-08-14T19:16:34.070422+00:00"
 }

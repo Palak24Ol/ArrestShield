@@ -13,9 +13,9 @@ Last verified: 15 August 2026.
 
 ## One-sentence status
 
-The research pipeline works end to end and now uses a calibrated,
-seed-stable character model; external scam-call recall is still only 6.17%, so
-the detector is not promoted and cannot automatically trigger the honeypot.
+The clean `major_project` demo now provides transcript/audio to binary ML to
+LLM-honeypot routing with 90% on its fixed behavioral suite; production use
+remains blocked because the broader independent-data evidence is insufficient.
 
 ## What is complete
 
@@ -24,6 +24,7 @@ the detector is not promoted and cannot automatically trigger the honeypot.
 | Dataset pipeline | Complete | 52,206 conversations, 615,084 turns, zero split-group leakage |
 | Baseline + ladder models | Complete | SGD and XGBoost, seeds 17/42/93 |
 | Calibrated mixed-source candidate | Complete | Character TF-IDF + SGD + Platt scaling; one threshold across three seeds |
+| Simple professor-demo detector | Complete | Word/character TF-IDF + SGD; 18/20 behavioral cases and 10/10 scams detected |
 | Frozen external-text evaluation | Complete | 243 CC0 scam-call transcripts excluded from training and selection |
 | Multi-task auxiliary heads | Complete | Scam type, stage, 9 tactics |
 | Risk fusion | Complete | XGBoost over out-of-fold base scores |
@@ -31,7 +32,7 @@ the detector is not promoted and cannot automatically trigger the honeypot.
 | Inference API | Complete | `/healthz`, `/v1/model`, `/v1/detect/text`, `/v1/detect/audio` |
 | LLM honeypot | Complete | Signed handoff, default-deny gate, live Groq engagement verified |
 | Audio → honeypot chain | Complete | `scripts/run_honeypot.py --audio` |
-| Tests | 98 passing | `python -m pytest tests/ -q` |
+| Tests | 101 repository + 2 packaged-project tests passing | `python -m pytest tests/ -q` and `python -m pytest major_project/tests/ -q` |
 
 Verified end to end on 13 August 2026: audio to Whisper to transcript to trained
 detector to HMAC-signed handoff to eligibility gate to live Groq persona reply
@@ -158,6 +159,3 @@ No LLM produces a feature, score, threshold, or label anywhere in detection.
 .venv\Scripts\python.exe scripts\run_api.py
 .venv\Scripts\python.exe scripts\run_honeypot.py --demo --research-mode
 ```
-
-The honeypot requires `GROQ_API_KEY` in a git-ignored `.env`. Without it every
-other command still runs.

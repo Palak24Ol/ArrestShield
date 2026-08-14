@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "created_at_utc": "2026-08-14T19:06:32.566426+00:00",
+  "git_revision": "b43d9740f4ccce0baf9fa49a951b129c9968a909",
+  "artifact_sha256": "8b1b0f20d640390be70428822282fcf2ad5d6672689ecb1d29e5c375fd649b06",
+  "artifact_bytes": 3150625,
+  "model_family": "simple_transcript_content_sgd",
+  "feature_variant": "word_char",
+  "threshold": 0.0006237220368348063,
+  "deployment_seed": 42,
+  "promotion_status": "research_only_demo"
+}
